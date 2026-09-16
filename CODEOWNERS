@@ -1,0 +1,35 @@
+# Rolevia CODEOWNERS
+# Intended ownership mapping across bounded contexts and critical subsystems.
+# Canonical GitHub usernames/teams are assigned as active contributors join.
+
+# Global default owner
+* @akshaykumar33
+
+# Security & Compliance
+/SECURITY.md @akshaykumar33
+/docs/security/ @akshaykumar33
+/.github/workflows/security.yml @akshaykumar33
+
+# AI Architecture & Context Protocol
+/.ai/ @akshaykumar33
+/.agents/ @akshaykumar33
+/.skills/ @akshaykumar33
+/docs/ai/ @akshaykumar33
+
+# Architecture & ADRs
+/docs/architecture/ @akshaykumar33
+/docs/adr/ @akshaykumar33
+
+# Core Monorepo & Infrastructure
+/package.json @akshaykumar33
+/pnpm-workspace.yaml @akshaykumar33
+/turbo.json @akshaykumar33
+/.github/workflows/ @akshaykumar33
+
+# Domain Contracts & Config
+/packages/contracts/ @akshaykumar33
+/packages/config/ @akshaykumar33
+
+# UI & Frontend
+/packages/ui/ @akshaykumar33
+/apps/web/ @akshaykumar33
