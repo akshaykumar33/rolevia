@@ -1,0 +1,26 @@
+{
+  "name": "rolevia-monorepo",
+  "version": "0.1.0-bootstrap",
+  "private": true,
+  "description": "Rolevia — Secure, Multi-Tenant AI Career Operating System",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --check \"**/*.{ts,tsx,js,json,md}\"",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "turbo": "^2.4.4",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}
