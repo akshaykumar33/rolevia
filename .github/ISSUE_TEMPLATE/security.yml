@@ -1,0 +1,21 @@
+name: Security Hardening / Finding
+description: Report a non-critical security hardening improvement (for critical vulnerabilities, see SECURITY.md)
+labels: ["type:security", "priority:p0"]
+body:
+  - type: markdown
+    attributes:
+      value: "IMPORTANT: For critical cross-tenant data leaks or remote exploits, follow responsible disclosure in SECURITY.md instead of filing public issues."
+  - type: input
+    id: component
+    attributes:
+      label: Affected Subsystem
+      description: e.g. Auth, RAG, File Upload, Tenancy
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Hardening Recommendation
+      description: What control should be added or tightened?
+    validations:
+      required: true

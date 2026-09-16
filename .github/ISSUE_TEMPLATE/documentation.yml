@@ -1,0 +1,18 @@
+name: Documentation Improvement
+description: Propose improvements, updates, or fixes to Rolevia engineering documentation
+labels: ["type:docs"]
+body:
+  - type: input
+    id: path
+    attributes:
+      label: Target Document Path
+      description: e.g. docs/architecture/TENANCY.md
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Requested Change or Clarification
+      description: Explain what needs updating and why
+    validations:
+      required: true

@@ -1,0 +1,34 @@
+name: Feature Request
+description: Propose a new user capability or platform enhancement
+labels: ["type:feature"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Feature Title
+      description: Concise summary of the proposed feature
+    validations:
+      required: true
+  - type: textarea
+    id: user_value
+    attributes:
+      label: User Value & Problem Statement
+      description: What candidate or organization problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution & Flow
+      description: How should this work from the user's perspective?
+    validations:
+      required: true
+  - type: checkboxes
+    id: invariants
+    attributes:
+      label: Invariant Checks
+      options:
+        - label: "Upholds the truthfulness invariant (no AI fabrication)"
+          required: true
+        - label: "Maintains strict tenant and workspace isolation"
+          required: true

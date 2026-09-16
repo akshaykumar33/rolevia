@@ -1,0 +1,18 @@
+name: Architecture Proposal
+description: Propose an architectural change, new bounded context, or ADR topic
+labels: ["type:refactor", "area:backend"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Topic / Context
+      description: What subsystem or boundary is being discussed?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context & Trade-Offs
+      description: Explain the engineering drivers and alternatives evaluated
+    validations:
+      required: true
