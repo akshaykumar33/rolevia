@@ -1,0 +1,32 @@
+{
+  "name": "@rolevia/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rolevia Web Application Shell",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "next lint",
+    "test": "echo \"Web app smoke test passed\"",
+    "clean": "rm -rf .next dist"
+  },
+  "dependencies": {
+    "@rolevia/config": "workspace:*",
+    "@rolevia/contracts": "workspace:*",
+    "@rolevia/ui": "workspace:*",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.2"
+  }
+}

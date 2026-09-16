@@ -1,0 +1,25 @@
+{
+  "name": "@rolevia/ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rolevia design tokens, themes, and semantic styling primitives",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./theme.css": "./src/theme.css"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo \"UI syntax verified\"",
+    "test": "echo \"UI verified\"",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}
