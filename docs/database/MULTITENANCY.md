@@ -5,6 +5,7 @@ PostgreSQL Row-Level Security (RLS) provides kernel-level defense-in-depth preve
 ---
 
 ## 1. RLS Policy Implementation
+
 ```sql
 -- Enable RLS on candidate experiences
 ALTER TABLE candidate_experiences ENABLE ROW LEVEL SECURITY;
@@ -25,7 +26,9 @@ CREATE POLICY tenant_isolation_policy ON candidate_experiences
 ---
 
 ## 2. Connection Initialization
+
 Database connection pools set the session variables inside the transactional scope:
+
 ```sql
 SET LOCAL app.current_tenant_id = '...';
 SET LOCAL app.current_workspace_id = '...';

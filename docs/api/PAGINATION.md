@@ -5,6 +5,7 @@ Collections support cursor-based pagination as the primary standard, with page-n
 ---
 
 ## Cursor-Based Response Envelope
+
 ```json
 {
   "data": [ ... ],
@@ -19,6 +20,7 @@ Collections support cursor-based pagination as the primary standard, with page-n
 ---
 
 ## Query Parameters
-* `limit`: Number of items per page (default: 20, max: 100).
-* `cursor`: Opaque base64-encoded pagination token.
-* `sort`: Sort attribute and order (e.g. `-createdAt` for descending).
+
+- `limit`: Number of items per page (default: 20, max: 100).
+- `cursor`: Opaque base64-encoded pagination token.
+- `sort`: Sort attribute and order (e.g. `-createdAt` for descending).

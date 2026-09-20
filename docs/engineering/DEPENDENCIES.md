@@ -5,7 +5,9 @@ Every external package introduces maintenance, bundle weight, and security expos
 ---
 
 ## Evaluation Checklist
+
 Before running `pnpm add <package>`, evaluate:
+
 1. **Maintenance**: Is the project actively maintained? When was the last release?
 2. **Security**: Are there known CVEs or supply chain issues (`pnpm audit`)?
 3. **Bundle Size**: What is the impact on frontend bundle weight (`bundlephobia`)?

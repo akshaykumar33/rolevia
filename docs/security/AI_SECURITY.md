@@ -5,6 +5,7 @@ Establishes boundaries between external data and system execution.
 ---
 
 ## Data Trust Levels
+
 1. `SYSTEM`: Immutable instructions defined by platform engineering.
 2. `DEVELOPER`: Application logic and validated prompt templates.
 3. `USER`: Authenticated candidate input and verified career facts.

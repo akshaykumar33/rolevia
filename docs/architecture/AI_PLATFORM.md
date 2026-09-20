@@ -31,11 +31,13 @@ export interface EmbeddingProvider {
 ---
 
 ## Telemetry & Cost Control
+
 Every model invocation generates an immutable telemetry record:
-* `tenantId` & `workspaceId`
-* `modelName` & `providerName`
-* `purpose` (e.g. `resume_tailoring`, `fit_evaluation`, `jd_parsing`)
-* `tokensIn`, `tokensOut`, `latencyMs`, `costUsd`
-* `status` (`SUCCESS`, `FILTERED`, `ERROR`)
+
+- `tenantId` & `workspaceId`
+- `modelName` & `providerName`
+- `purpose` (e.g. `resume_tailoring`, `fit_evaluation`, `jd_parsing`)
+- `tokensIn`, `tokensOut`, `latencyMs`, `costUsd`
+- `status` (`SUCCESS`, `FILTERED`, `ERROR`)
 
 Tenants can configure budget thresholds. When approaching limits, workflows gracefully downgrade to smaller models or alert the user.

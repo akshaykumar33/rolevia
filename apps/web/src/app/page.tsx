@@ -1,5 +1,5 @@
-import { BRAND_CONFIG } from '@rolevia/config';
-import { DESIGN_TOKENS } from '@rolevia/ui';
+import { BRAND_CONFIG } from "@rolevia/config";
+import { DESIGN_TOKENS } from "@rolevia/ui";
 
 export default function HomePage() {
   return (
@@ -45,26 +45,41 @@ export default function HomePage() {
         {/* System Invariants Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
           <div className="p-5 rounded-xl bg-surface border border-border-subtle space-y-2.5 transition-colors hover:border-border-strong">
-            <div className="text-xs font-mono text-muted uppercase">Invariant 01</div>
-            <h3 className="text-sm font-medium text-primary">Zero Credential Fabrication</h3>
+            <div className="text-xs font-mono text-muted uppercase">
+              Invariant 01
+            </div>
+            <h3 className="text-sm font-medium text-primary">
+              Zero Credential Fabrication
+            </h3>
             <p className="text-xs text-muted leading-relaxed">
-              AI agents are cryptographically bounded. Facts confirmed by the user hold absolute precedence over model inferences.
+              AI agents are cryptographically bounded. Facts confirmed by the
+              user hold absolute precedence over model inferences.
             </p>
           </div>
 
           <div className="p-5 rounded-xl bg-surface border border-border-subtle space-y-2.5 transition-colors hover:border-border-strong">
-            <div className="text-xs font-mono text-muted uppercase">Invariant 02</div>
-            <h3 className="text-sm font-medium text-primary">Strict Logical Multi-Tenancy</h3>
+            <div className="text-xs font-mono text-muted uppercase">
+              Invariant 02
+            </div>
+            <h3 className="text-sm font-medium text-primary">
+              Strict Logical Multi-Tenancy
+            </h3>
             <p className="text-xs text-muted leading-relaxed">
-              Every database query, vector search, and cache key is scoped to verified tenant and workspace boundaries.
+              Every database query, vector search, and cache key is scoped to
+              verified tenant and workspace boundaries.
             </p>
           </div>
 
           <div className="p-5 rounded-xl bg-surface border border-border-subtle space-y-2.5 transition-colors hover:border-border-strong">
-            <div className="text-xs font-mono text-muted uppercase">Invariant 03</div>
-            <h3 className="text-sm font-medium text-primary">Human Agency & Consent</h3>
+            <div className="text-xs font-mono text-muted uppercase">
+              Invariant 03
+            </div>
+            <h3 className="text-sm font-medium text-primary">
+              Human Agency & Consent
+            </h3>
             <p className="text-xs text-muted leading-relaxed">
-              Consequential third-party interactions and application submissions require explicit, authenticated human approval.
+              Consequential third-party interactions and application submissions
+              require explicit, authenticated human approval.
             </p>
           </div>
         </div>
@@ -76,7 +91,7 @@ export default function HomePage() {
               Design Token System Active
             </h3>
             <span className="text-xs font-mono text-muted">
-              Font: {DESIGN_TOKENS.typography.fontSans.split(',')[0]}
+              Font: {DESIGN_TOKENS.typography.fontSans.split(",")[0]}
             </span>
           </div>
 
@@ -107,9 +122,7 @@ export default function HomePage() {
 
       {/* Footer / Repository Provenance */}
       <footer className="pt-6 border-t border-border-subtle flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted font-mono">
-        <div>
-          {BRAND_CONFIG.legalEntity} &bull; Phase 0 Foundation
-        </div>
+        <div>{BRAND_CONFIG.legalEntity} &bull; Phase 0 Foundation</div>
         <div className="flex items-center gap-4">
           <span>Docs: /docs</span>
           <span>ADRs: /docs/adr</span>

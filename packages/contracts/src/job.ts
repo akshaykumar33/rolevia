@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const JobRequirementTypeSchema = z.enum([
-  'MUST_HAVE',
-  'NICE_TO_HAVE',
-  'EXPERIENCE_LEVEL',
-  'EDUCATION',
-  'CERTIFICATION',
+  "MUST_HAVE",
+  "NICE_TO_HAVE",
+  "EXPERIENCE_LEVEL",
+  "EDUCATION",
+  "CERTIFICATION",
 ]);
 export type JobRequirementType = z.infer<typeof JobRequirementTypeSchema>;
 

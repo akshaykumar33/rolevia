@@ -7,6 +7,7 @@ Rolevia uses structured, contextual JSON logging across all backend and worker s
 ## 1. Structured Log Schema
 
 Every log entry outputs single-line JSON conforming to this schema:
+
 ```json
 {
   "timestamp": "2026-09-16T12:00:00.000Z",
@@ -29,5 +30,6 @@ Every log entry outputs single-line JSON conforming to this schema:
 ---
 
 ## 2. Redaction & Privacy Invariants
-* **Strict Secret Redaction**: Passwords, API keys, JWTs, and session tokens must never be logged.
-* **PII Redaction**: Full resume texts, candidate phone numbers, and personal email bodies are masked or logged only as cryptographically hashed identifiers in application traces.
+
+- **Strict Secret Redaction**: Passwords, API keys, JWTs, and session tokens must never be logged.
+- **PII Redaction**: Full resume texts, candidate phone numbers, and personal email bodies are masked or logged only as cryptographically hashed identifiers in application traces.

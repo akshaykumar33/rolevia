@@ -5,6 +5,7 @@ Mandatory procedure for any AI coding agent before and after writing code.
 ---
 
 ## 1. Before Changing Code
+
 1. **Read `.ai/PROJECT.md`**: Confirm understanding of product boundaries and truthfulness invariants.
 2. **Read `.ai/CURRENT_STATE.md`**: Identify what currently exists and what phase the project is in.
 3. **Read `.ai/ARCHITECTURE.md`**: Understand bounded contexts and dependency directions.
@@ -19,6 +20,7 @@ Mandatory procedure for any AI coding agent before and after writing code.
 ---
 
 ## 2. After Implementation
+
 1. **Run Formatter**: `pnpm format`
 2. **Run Linter**: `pnpm lint`
 3. **Run Typecheck**: `pnpm typecheck`
