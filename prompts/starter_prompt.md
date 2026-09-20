@@ -1,5 +1,14 @@
 # ROLEVIA — REPOSITORY BOOTSTRAP MASTER PROMPT
 
+> **STATUS: COMPLETE — HISTORICAL RECORD.**
+> This prompt bootstrapped the repository (Phase 0) and has been executed. It is kept as the record of
+> why the repo is shaped the way it is. **Do not re-run it.**
+>
+> **For all work from here on, use [`BUILD_PROMPT.md`](./BUILD_PROMPT.md)** — the active delivery
+> prompt, where interface quality and functional completeness are blocking merge gates and the tech
+> stack below is a _default_, not a mandate (§4 of that prompt: library choices are free, layer changes
+> need an ADR).
+
 ## Mission
 
 You are initializing a new production-grade software repository called:
@@ -41,33 +50,33 @@ DO NOT IMPLEMENT THE FULL APPLICATION IN THIS INITIAL RUN.
 
 This run creates:
 
-* repository structure
-* AI context system
-* engineering constitution
-* documentation architecture
-* ADR system
-* Git strategy
-* commit conventions
-* PR conventions
-* issue conventions
-* coding standards
-* security standards
-* architecture standards
-* design standards
-* testing standards
-* observability standards
-* database standards
-* API standards
-* AI/agent standards
-* skill definitions
-* development workflows
-* phased implementation plans
-* CI skeleton
-* environment templates
-* CODEOWNERS strategy
-* contribution rules
-* roadmap
-* task templates
+- repository structure
+- AI context system
+- engineering constitution
+- documentation architecture
+- ADR system
+- Git strategy
+- commit conventions
+- PR conventions
+- issue conventions
+- coding standards
+- security standards
+- architecture standards
+- design standards
+- testing standards
+- observability standards
+- database standards
+- API standards
+- AI/agent standards
+- skill definitions
+- development workflows
+- phased implementation plans
+- CI skeleton
+- environment templates
+- CODEOWNERS strategy
+- contribution rules
+- roadmap
+- task templates
 
 Only create minimal compilable application scaffolding where necessary.
 
@@ -104,6 +113,11 @@ Important knowledge belongs inside the repository.
 # 2. TECHNOLOGY DIRECTION
 
 Create architecture around this default technology direction.
+
+> **Superseded for ongoing work.** This list was the _starting_ direction. The current policy is
+> [`BUILD_PROMPT.md`](./BUILD_PROMPT.md) §4: any library is permitted if it makes the product
+> materially better (justify it in the PR); changing a _layer_ — framework, runtime, database, queue,
+> workflow engine, auth model — requires an accepted ADR.
 
 ## Monorepo
 
@@ -2646,16 +2660,16 @@ STATUS: FOUNDATION
 
 Implemented:
 
-* monorepo
-* documentation
-* CI baseline
+- monorepo
+- documentation
+- CI baseline
 
 Not implemented:
 
-* authentication
-* database
-* career intelligence
-* job connectors
+- authentication
+- database
+- career intelligence
+- job connectors
 
 ---
 
