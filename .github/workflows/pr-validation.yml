@@ -1,0 +1,77 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  conventions:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Validate Branch Name
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          PATTERN='^(feat|fix|refactor|perf|test|docs|build|ci|chore|security|hotfix|revert|release)/[a-z0-9]+(-[a-z0-9]+)*$'
+          if ! echo "$BRANCH" | grep -qE "$PATTERN"; then
+            echo "::error::Branch '$BRANCH' does not match <type>/<scope>-<slug>."
+            echo "Types: feat fix refactor perf test docs build ci chore security hotfix revert release"
+            echo "Example: feat/jobs-match-explanation"
+            echo "See docs/engineering/GIT_WORKFLOW.md section 1.1"
+            exit 1
+          fi
+          if [ ${#BRANCH} -gt 60 ]; then
+            echo "::error::Branch name exceeds 60 characters."
+            exit 1
+          fi
+          echo "Branch name OK: $BRANCH"
+
+      - name: Validate PR Title (Conventional Commits)
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          PATTERN='^(feat|fix|refactor|perf|test|docs|build|ci|chore|revert|security)(\([a-z0-9-]+\))?!?: .{1,}$'
+          if ! echo "$TITLE" | grep -qE "$PATTERN"; then
+            echo "::error::PR title must follow Conventional Commits — it becomes the squash-merge message."
+            echo "Got:      $TITLE"
+            echo "Expected: type(scope): imperative summary"
+            echo "Example:  feat(jobs): add match explanation panel"
+            exit 1
+          fi
+          echo "PR title OK: $TITLE"
+
+      - name: Check PR Template Was Completed
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [ -z "$BODY" ]; then
+            echo "::error::PR description is empty. Complete .github/PULL_REQUEST_TEMPLATE.md."
+            exit 1
+          fi
+
+          # Strip HTML comments (the template's guidance) and measure what the author actually wrote.
+          PROSE=$(printf '%s' "$BODY" | perl -0777 -pe 's/<!--.*?-->//gs' | sed -E 's/^\s*-?\s*\[[ xX]\]\s*//' | tr -s '[:space:]' ' ')
+          if [ ${#PROSE} -lt 120 ]; then
+            echo "::error::PR description has almost no written content beyond the template scaffold."
+            echo "Fill in Summary, Why, Changes, and Known Gaps. See docs/engineering/GIT_WORKFLOW.md section 4.2"
+            exit 1
+          fi
+
+          # Known Gaps is mandatory — silence about incomplete work is not acceptable.
+          if ! printf '%s' "$BODY" | grep -q "## Known Gaps"; then
+            echo "::error::PR body is missing the '## Known Gaps' section. State what is incomplete, or 'None'."
+            exit 1
+          fi
+
+          echo "PR description OK"
