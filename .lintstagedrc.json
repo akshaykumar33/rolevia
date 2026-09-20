@@ -1,0 +1,7 @@
+{
+  "*": ["secretlint --maskSecrets --secretlintignore .gitignore"],
+  "*.{ts,tsx,js,jsx,mjs,cjs,json,md,yml,yaml,css}": ["prettier --write"],
+  "apps/web/**/*.{ts,tsx}": [
+    "pnpm --filter @rolevia/web exec eslint --fix --max-warnings=0"
+  ]
+}

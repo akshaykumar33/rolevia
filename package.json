@@ -12,15 +12,31 @@
     "test": "turbo run test",
     "format": "prettier --check \"**/*.{ts,tsx,js,json,md}\"",
     "format:fix": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "verify": "pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm verify:secrets",
+    "verify:secrets": "node scripts/pre-commit-guard.mjs --worktree && secretlint --maskSecrets --secretlintignore .gitignore \"**/*\"",
+    "verify:branch": "node scripts/pre-commit-guard.mjs",
+    "prepare": "husky",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@secretlint/secretlint-rule-pattern": "^9.3.4",
+    "@secretlint/secretlint-rule-preset-recommend": "^9.3.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.5.3",
+    "secretlint": "^9.3.4",
     "turbo": "^2.4.4",
     "typescript": "^5.8.2"
   },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": ">=8.5.18"
+    }
   }
 }
