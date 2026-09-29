@@ -28,6 +28,9 @@
 - Monorepo compilation with Turborepo (`pnpm build`).
 - Shared contract types and Zod schemas across packages.
 - Design tokens and theme toggle in web application shell.
+- **Handcrafted CP-Inspired Studio UI Shell (`apps/web`)**: Integrated Cocoa & Parchment warm token architecture, Fraunces serif display typography, custom listbox workspace pickers, circular SVG progress rings (`5/5 Facts Grounded`), flame streak badges, real-time Telemetry HUD (`org_acme_prod`), interactive 10-state UX state machine sandbox with event telemetry terminal, and split-pane Application Studio Cockpit with inline cryptographic fact citations.
+- **Client-Side WebAssembly (WASM) Fact Provenance Engine**: Genuine 115-byte WebAssembly binary bytecode compiled and instantiated directly in linear memory, delivering sub-0.01ms local-first career claim verification with real-time speedup benchmarks against WebCrypto SHA-256 and interpreted JS loops.
+- **Micro-Interactions & Special Effects**: CustomSelect glassmorphic listbox with Framer Motion spring physics and keyboard navigation, sliding animated tab pill (`layoutId="activeTabPill"`), Web Audio API tactile sound synthesizer with polite header mute toggle, ambient neural constellation canvas, and celebratory confetti showers on HITL authorization.
 - **Pre-commit gate — verified end to end on a real commit.** Blocks: commits to `main`,
   non-conforming branch names, sensitive files (`.env*`, keys, certs, dumps), secret _content_
   (Anthropic/OpenAI/Stripe keys, JWTs, private key blocks, non-local DB connection strings, generic

@@ -1,35 +1,38 @@
 export const DESIGN_TOKENS = {
   colors: {
     dark: {
-      bgBase: "#0b0f17",
-      bgSurface: "#111827",
-      bgSurfaceRaised: "#1f2937",
-      textPrimary: "#f9fafb",
-      textMuted: "#9ca3af",
-      borderSubtle: "#1f2937",
-      borderStrong: "#374151",
-      accentPrimary: "#38bdf8",
-      statusSuccess: "#10b981",
-      statusWarning: "#f59e0b",
-      statusDanger: "#ef4444",
+      bgBase: "#14100c", // Deep Cocoa
+      bgSurface: "#1d1813",
+      bgSurfaceRaised: "#28211b",
+      textPrimary: "#f5eee6", // Warm Cream
+      textMuted: "#a69485",
+      borderSubtle: "rgba(245, 238, 230, 0.08)",
+      borderStrong: "rgba(245, 238, 230, 0.16)",
+      accentPrimary: "#f08c42", // Warm Caramel
+      accentSecondary: "#c97d52",
+      statusSuccess: "#4ade80",
+      statusWarning: "#fbbf24",
+      statusDanger: "#f87171",
     },
     light: {
-      bgBase: "#ffffff",
-      bgSurface: "#f8fafc",
-      bgSurfaceRaised: "#f1f5f9",
-      textPrimary: "#0f172a",
-      textMuted: "#64748b",
-      borderSubtle: "#e2e8f0",
-      borderStrong: "#cbd5e1",
-      accentPrimary: "#0284c7",
-      statusSuccess: "#059669",
-      statusWarning: "#d97706",
-      statusDanger: "#dc2626",
+      bgBase: "#f9f6f0", // Warm Parchment
+      bgSurface: "#ffffff",
+      bgSurfaceRaised: "#f2ede4",
+      textPrimary: "#2d2218",
+      textMuted: "#6e5e52",
+      borderSubtle: "rgba(110, 94, 82, 0.12)",
+      borderStrong: "rgba(110, 94, 82, 0.22)",
+      accentPrimary: "#d46b28",
+      accentSecondary: "#8c5b36",
+      statusSuccess: "#2e7d4d",
+      statusWarning: "#c27814",
+      statusDanger: "#c94432",
     },
   },
   typography: {
+    fontDisplay: '"Fraunces", "Iowan Old Style", Georgia, serif',
     fontSans:
-      'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      'Inter, Nunito, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     fontMono: 'JetBrains Mono, "Fira Code", monospace',
   },
   spacing: {

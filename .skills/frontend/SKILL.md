@@ -1,38 +1,48 @@
-# Skill: Frontend Component Development
+# Skill: Frontend Component Development & UI Craft
 
 ## Purpose
 
-Guide the authoring of responsive, accessible, and high-performance Next.js React components using Rolevia design tokens.
+Author responsive, accessible, interactive, and high-performance Next.js React components using Rolevia design tokens, fulfilling all requirements of the [UX Definition of Done](file:///d:/pro/Rolevia/docs/design/UX_DEFINITION_OF_DONE.md) and integrating world-class UI craft (`taste-skill`, `ui-design`, `motion-design`, `typography`, and `design-system-architect`).
 
-## When to use
+## When to Use
 
-- Creating new UI components, layout templates, or application pages.
+- Creating new UI components, interactive cockpits, layout templates, modals, or application pages in `apps/web` or `packages/ui`.
+- Reviewing PRs with user-facing interface changes.
 
 ## Inputs
 
-- Component specifications, token mappings, accessibility requirements.
+- Component specifications, token mappings from `@rolevia/ui`, accessibility and state requirements.
 
 ## Procedure
 
-1. Verify required tokens in `packages/ui` before writing CSS.
-2. Build component using semantic HTML primitives and Tailwind token classes.
-3. Add ARIA labels, focus states, and keyboard navigation (`Tab`, `Enter`, `Escape`).
-4. Implement distinct visual states: default, hover, active, loading, empty, error.
-5. Verify responsiveness across mobile (< 768px) and desktop breakpoints.
+1. **Verify Token Architecture**: Confirm required tokens in `@rolevia/ui` before writing CSS. Never use arbitrary colors or magic number margins.
+2. **Implement Complete State Machine**: Implement all 10 applicable states:
+   - Initial Loading (skeleton matching exact layout geometry, CLS = 0)
+   - Refetch Loading (keep stale data visible with subtle indicator)
+   - Empty First Run (with instructional context and primary CTA)
+   - Empty Filtered (with active filter tags and one-click clear)
+   - Partial Failure (render successes with retry for failed section)
+   - Error (plain-language message with retry button)
+   - Permission Denied (role required and who to ask)
+   - Offline / Unreachable (warning banner, gracefully block/queue writes)
+   - Success (confirmation toast or checkmark)
+   - Optimistic with Rollback
+3. **Enforce WCAG 2.1 AA Accessibility**:
+   - Full keyboard navigation (`Tab`, `Shift+Tab`, `Enter`, `Space`, `Esc`).
+   - Explicit `:focus-visible` ring on all interactive elements.
+   - Focus trap in dialogs; restore focus to trigger on close.
+   - Associated labels on all inputs; inline error messages linked via `aria-describedby`.
+   - Screen reader announcements for async operations via `aria-live`.
+4. **Motion & Interaction Craft**:
+   - Purposeful, fast micro-interactions ($\le 150\text{ ms}$).
+   - Respect `prefers-reduced-motion`.
+5. **Responsive & Mobile-First**:
+   - Fluid typography using `clamp()`.
+   - Minimum 44 × 44 px touch targets on mobile viewports (< 768px).
 
 ## Validation
 
-- Inspect visual rendering in light and dark mode. Test full keyboard navigation.
-
-## Common mistakes
-
-- Hardcoding arbitrary colors instead of semantic tokens.
-- Missing loading or empty states.
-
-## Security considerations
-
-- Sanitize any rendered user HTML using DOMPurify.
-
-## Output expectations
-
-- Accessible component exported from `@rolevia/ui` or integrated into `apps/web`.
+- Inspect visual rendering in Light and Dark mode.
+- Test full keyboard navigation without touching a mouse.
+- Run automated `axe-core` accessibility audit (zero critical/serious violations).
+- Run `pnpm --filter @rolevia/web lint` and `pnpm build`.

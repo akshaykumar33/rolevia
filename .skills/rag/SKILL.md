@@ -1,38 +1,37 @@
-# Skill: RAG & Semantic Retrieval
+# Skill: Career Context Engine & Tenant-Safe RAG
 
 ## Purpose
 
-Design, execute, and evaluate tenant-safe vector retrieval and hybrid search pipelines.
+Extract, chunk, embed, and retrieve candidate achievements and job specifications with cryptographic provenance, strict tenant isolation, and zero cross-tenant contamination.
 
-## When to use
+## When to Use
 
-- Updating context retrieval for resume tailoring or match evaluation.
+- Designing or modifying document parsing, pgvector semantic search, chunking algorithms, or grounding validation.
 
 ## Inputs
 
-- Query text, candidate workspace context, target chunk size, k results.
+- Candidate documents (resumes, transcripts, portfolios), search queries, tenant and candidate scopes.
 
 ## Procedure
 
-1. Verify query executes inside authenticated tenant session.
-2. Build hybrid query combining `pgvector` cosine similarity and `tsvector` full-text search.
-3. Apply immutable `WHERE tenant_id = :tenantId AND workspace_id = :workspaceId` filter.
-4. Merge scores using Reciprocal Rank Fusion (RRF).
-5. Compress and deduplicate retrieved chunks into final prompt context.
+1. **Chunking & Hashing**:
+   - Split documents into logical sections (Experience, Education, Skills, Projects).
+   - Generate a SHA-256 hash for every chunk for cryptographic attribution.
+   - Tag each chunk with candidate, workspace, and tenant IDs.
+2. **Hybrid Search Execution**:
+   - Combine dense vector similarity (`pgvector` HNSW `<=>` cosine distance) with sparse keyword search (`tsvector` BM25 / `ts_rank_cd`).
+   - Merge results using Reciprocal Rank Fusion (RRF).
+3. **Tenant-Level Isolation**:
+   - Always include `WHERE tenant_id = :tenantId AND workspace_id = :workspaceId AND candidate_id = :candidateId` on every vector search query.
+4. **Grounding Verification**:
+   - Verify that generated career statements directly map to source chunk IDs and confirmed facts.
 
 ## Validation
 
-- Run automated cross-tenant vector isolation test.
+- Test vector search with mismatched tenant credentials to ensure 0 rows returned.
+- Benchmark search recall and latency ($< 150\text{ ms}$).
 
-## Common mistakes
+## Security Considerations
 
-- Executing vector distance calculations across the entire table without tenant pre-filtering.
-- Stuffing unranked duplicate chunks into prompt context.
-
-## Security considerations
-
-- Vector chunks must not cross workspace boundaries under any circumstance.
-
-## Output expectations
-
-- Sub-150ms ranked chunks with source document provenance citations.
+- Never perform vector search without tenant and workspace scoping.
+- Prevent indirect prompt injection embedded in candidate uploaded documents.
