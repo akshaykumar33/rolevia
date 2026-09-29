@@ -5,6 +5,7 @@ Vector embeddings in Rolevia power the Context Engine and semantic career matchi
 ---
 
 ## 1. Schema & Index Structure
+
 ```sql
 CREATE TABLE context_embeddings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -20,7 +21,7 @@ CREATE TABLE context_embeddings (
 );
 
 -- HNSW Cosine Similarity Index
-CREATE INDEX context_embeddings_hnsw_idx ON context_embeddings 
+CREATE INDEX context_embeddings_hnsw_idx ON context_embeddings
 USING hnsw (embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
 
@@ -31,5 +32,6 @@ CREATE INDEX context_embeddings_tenant_idx ON context_embeddings(tenant_id, work
 ---
 
 ## 2. Invariants
+
 Every vector search query must enforce `tenant_id = :tenantId AND workspace_id = :workspaceId`.
 Global vector scans across tenants are prohibited.

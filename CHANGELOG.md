@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+
 - Phase 1: Identity, multi-tenant workspace isolation, and RBAC runtime.
 - Phase 2: Career Intelligence Vault and verified document parsing pipeline.
 
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0-bootstrap] - 2026-09-16
 
 ### Added
+
 - **Repository Governance**: Root governance, editor config, licensing decisions, security policy, and contributing guide.
 - **Documentation Architecture**: Complete system architecture, bounded contexts, API standards, database standards, AI guidelines, and 16 phased implementation roadmaps.
 - **Architecture Decision Records**: Initial ADR framework and records 0001 through 0010.

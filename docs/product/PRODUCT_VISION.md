@@ -1,6 +1,7 @@
 # Product Vision
 
 ## Mission Statement
+
 Rolevia is a secure, multi-tenant AI Career Operating System that understands a candidate, maintains persistent career intelligence, discovers relevant jobs, evaluates fit, generates truthful tailored application material, assists or automates permitted application workflows, tracks outcomes, prepares candidates for interviews, and continuously improves the user's career strategy.
 
 ---

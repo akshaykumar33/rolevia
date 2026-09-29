@@ -5,6 +5,7 @@ All state-mutating POST operations (e.g. application submission, resume export, 
 ---
 
 ## Idempotency Mechanism
+
 1. Client sends a unique UUID v4 in the `Idempotency-Key` header.
 2. Server checks Redis for `idempotency:{tenantId}:{key}`.
 3. If processing, return `409 Conflict` (Operation in progress).

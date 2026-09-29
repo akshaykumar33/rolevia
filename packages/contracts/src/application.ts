@@ -1,16 +1,16 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const ApplicationStateSchema = z.enum([
-  'DRAFT',
-  'TAILORING',
-  'AWAITING_HUMAN_APPROVAL',
-  'APPROVED',
-  'SUBMITTING',
-  'SUBMITTED',
-  'INTERVIEW_SCHEDULED',
-  'REJECTED',
-  'OFFER_RECEIVED',
-  'WITHDRAWN',
+  "DRAFT",
+  "TAILORING",
+  "AWAITING_HUMAN_APPROVAL",
+  "APPROVED",
+  "SUBMITTING",
+  "SUBMITTED",
+  "INTERVIEW_SCHEDULED",
+  "REJECTED",
+  "OFFER_RECEIVED",
+  "WITHDRAWN",
 ]);
 export type ApplicationState = z.infer<typeof ApplicationStateSchema>;
 

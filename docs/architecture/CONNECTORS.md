@@ -10,11 +10,11 @@ Connectors implement the `JobSourceAdapter` interface and explicitly declare the
 
 ```typescript
 export enum ConnectorCapability {
-  DISCOVERY = 'DISCOVERY', // Can query and fetch job listings
-  DETAILS = 'DETAILS',     // Can retrieve comprehensive job description & requirements
-  ASSIST = 'ASSIST',       // Can fill or prepare web application inputs
-  SUBMIT = 'SUBMIT',       // Can submit final application via approved API/workflow
-  STATUS = 'STATUS',       // Can poll or receive application progression status
+  DISCOVERY = "DISCOVERY", // Can query and fetch job listings
+  DETAILS = "DETAILS", // Can retrieve comprehensive job description & requirements
+  ASSIST = "ASSIST", // Can fill or prepare web application inputs
+  SUBMIT = "SUBMIT", // Can submit final application via approved API/workflow
+  STATUS = "STATUS", // Can poll or receive application progression status
 }
 
 export interface JobSourceAdapter {
@@ -24,8 +24,12 @@ export interface JobSourceAdapter {
 
   discoverJobs(criteria: SearchCriteria): Promise<JobSummary[]>;
   getJobDetails(jobId: string): Promise<JobDetails>;
-  prepareSubmission?(application: ApplicationPackage): Promise<PreparationResult>;
-  submitApplication?(application: ApplicationPackage): Promise<SubmissionResult>;
+  prepareSubmission?(
+    application: ApplicationPackage,
+  ): Promise<PreparationResult>;
+  submitApplication?(
+    application: ApplicationPackage,
+  ): Promise<SubmissionResult>;
   getApplicationStatus?(referenceId: string): Promise<ApplicationStatus>;
 }
 ```
@@ -33,6 +37,7 @@ export interface JobSourceAdapter {
 ---
 
 ## Security & Ethical Invariants
-* **Strict Anti-Circumvention Rule**: Connectors must never implement CAPTCHA bypasses, cloudflare anti-bot circumventions, or credential-stealing proxies.
-* **Respect Provider Policies**: Operations must honor published rate limits, terms of service, and robots.txt protocols.
-* **Graceful Degradation**: If an external platform only supports `DISCOVERY` and `DETAILS`, Rolevia prepares the tailored materials for manual user copy/export rather than attempting unsanctioned browser automation.
+
+- **Strict Anti-Circumvention Rule**: Connectors must never implement CAPTCHA bypasses, cloudflare anti-bot circumventions, or credential-stealing proxies.
+- **Respect Provider Policies**: Operations must honor published rate limits, terms of service, and robots.txt protocols.
+- **Graceful Degradation**: If an external platform only supports `DISCOVERY` and `DETAILS`, Rolevia prepares the tailored materials for manual user copy/export rather than attempting unsanctioned browser automation.

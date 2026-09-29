@@ -1,14 +1,18 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const TenantTypeSchema = z.enum(['INDIVIDUAL', 'ORGANIZATION', 'SYSTEM']);
+export const TenantTypeSchema = z.enum([
+  "INDIVIDUAL",
+  "ORGANIZATION",
+  "SYSTEM",
+]);
 export type TenantType = z.infer<typeof TenantTypeSchema>;
 
 export const WorkspaceRoleSchema = z.enum([
-  'WORKSPACE_OWNER',
-  'WORKSPACE_ADMIN',
-  'WORKSPACE_MENTOR',
-  'WORKSPACE_CANDIDATE',
-  'WORKSPACE_VIEWER',
+  "WORKSPACE_OWNER",
+  "WORKSPACE_ADMIN",
+  "WORKSPACE_MENTOR",
+  "WORKSPACE_CANDIDATE",
+  "WORKSPACE_VIEWER",
 ]);
 export type WorkspaceRole = z.infer<typeof WorkspaceRoleSchema>;
 

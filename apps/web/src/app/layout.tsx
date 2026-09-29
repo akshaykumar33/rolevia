@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { BRAND_CONFIG, getBrandedTitle } from '@rolevia/config';
+import type { Metadata } from "next";
+import "./globals.css";
+import { BRAND_CONFIG, getBrandedTitle } from "@rolevia/config";
 
 export const metadata: Metadata = {
-  title: getBrandedTitle('System Operating Environment'),
+  title: getBrandedTitle("System Operating Environment"),
   description: BRAND_CONFIG.missionStatement,
 };
 

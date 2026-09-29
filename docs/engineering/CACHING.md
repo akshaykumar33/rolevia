@@ -5,6 +5,7 @@ Redis holds ephemeral cross-instance state such as rate limits, distributed lock
 ---
 
 ## Caching Guardrails
+
 1. **Tenant-Scoped Keys**: All Redis keys must include the tenant and workspace prefix:
    `tenant:{tenantId}:workspace:{workspaceId}:{resource}:{id}`
 2. **Mandatory TTL**: Every cache key must define an explicit Time-To-Live (TTL). Permanent unbounded cache keys are strictly prohibited.

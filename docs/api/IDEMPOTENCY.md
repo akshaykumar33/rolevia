@@ -5,6 +5,7 @@ Clients submitting mutating actions should provide the `Idempotency-Key` HTTP he
 ---
 
 ## Behavior Specification
+
 1. Header: `Idempotency-Key: <uuid-v4>`
 2. Scope: Scoped strictly to the authenticated `tenantId + userId`.
 3. Lifetime: Cached responses expire after 24 hours.

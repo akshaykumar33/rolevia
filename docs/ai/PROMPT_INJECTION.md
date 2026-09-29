@@ -5,6 +5,7 @@ All external text (JDs, resumes, scraped web pages, emails) is treated as `UNTRU
 ---
 
 ## Defense Strategies
+
 1. **Instruction Isolation**: External content is enclosed in clearly marked XML tags:
    ```xml
    <untrusted_job_description>

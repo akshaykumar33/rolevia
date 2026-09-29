@@ -1,0 +1,86 @@
+# Gitleaks configuration — Rolevia
+#
+# Used by CI to scan FULL repository history on every pull request and push.
+# The local pre-commit hook (secretlint + scripts/pre-commit-guard.mjs) is the fast
+# first line of defence; this is the authority. See docs/engineering/GIT_WORKFLOW.md §3.
+#
+# Adding an allowlist entry is a security-relevant change: it requires its own PR,
+# a comment explaining why, and a code-owner review. Never broaden a rule to unblock yourself.
+
+title = "Rolevia Secret Scan"
+
+[extend]
+useDefault = true
+
+# ---------------------------------------------------------------- custom rules
+
+[[rules]]
+id = "anthropic-api-key"
+description = "Anthropic API key"
+regex = '''sk-ant-[A-Za-z0-9_\-]{20,}'''
+keywords = ["sk-ant-"]
+
+[[rules]]
+id = "rolevia-db-url-with-password"
+description = "Database connection string with an inline password"
+regex = '''(?i)(postgres(ql)?|mysql|mongodb(\+srv)?|redis|amqp)://[^\s:@/]+:[^\s@/]{3,}@[^\s/]+'''
+keywords = ["postgres://", "postgresql://", "mysql://", "mongodb://", "redis://", "amqp://"]
+
+[[rules]]
+id = "generic-credential-assignment"
+description = "Hardcoded credential assigned to a variable"
+regex = '''(?i)(api[_-]?key|secret[_-]?key|access[_-]?token|auth[_-]?token|client[_-]?secret|passwd|password)\s*[:=]\s*["'][A-Za-z0-9_\-/+=]{16,}["']'''
+entropy = 3.2
+keywords = ["api_key", "apikey", "secret_key", "access_token", "auth_token", "client_secret", "password"]
+
+[[rules]]
+id = "temporal-tls-key"
+description = "Temporal / internal mTLS key material"
+regex = '''(?i)(tls|mtls)[_-]?(client[_-]?)?key\s*[:=]\s*["'][A-Za-z0-9_\-/+=]{24,}["']'''
+keywords = ["tls_key", "tlskey", "mtls_key", "client_key"]
+
+# ---------------------------------------------------------------- allowlist
+
+[allowlist]
+description = "Paths and values that cannot contain live credentials"
+
+commits = [
+  # Repository bootstrap commit containing local development database connection placeholder.
+  "2465ced382ba893ca0d24bb2772bb5834636d9fe",
+  # Intermediate UI commit with mock ATS session placeholders sanitized in subsequent commit.
+  "4ed105d280ca96dc7c02f6655cccc12fb1bcccc4",
+]
+
+stopwords = [
+  "rolevia_dev",
+  "rolevia_development",
+]
+
+paths = [
+  # Documented placeholders, never real values.
+  '''^\.env\.example$''',
+  # Scanner configuration necessarily contains the patterns it detects.
+  '''^\.gitleaks\.toml$''',
+  '''^\.secretlintrc\.json$''',
+  '''^scripts/pre-commit-guard\.mjs$''',
+  # Prose describing what a secret looks like.
+  '''^docs/security/.*\.md$''',
+  '''^docs/engineering/GIT_WORKFLOW\.md$''',
+  '''^prompts/.*\.md$''',
+  # Lockfiles contain integrity hashes, not credentials.
+  '''pnpm-lock\.yaml$''',
+]
+
+regexes = [
+  # Conventional placeholder values used in examples and templates.
+  '''(?i)(your|my|example|sample|placeholder|changeme|replace[_-]?me|dummy|fake|test|xxx+|<[^>]+>)''',
+  # Values that are references, not secrets.
+  '''(?i)(password|secret|token|key)\s*[:=]\s*["'](\$\{[^}]+\}|process\.env\.[A-Z_]+)["']''',
+  # Local development connection strings. A credential pointing at localhost is not a leak.
+  # Go RE2 has no lookahead, so local hosts are allowlisted here rather than excluded in the rule.
+  '''(?i)://[^\s:@/]+:[^\s@/]+@(localhost|127\.0\.0\.1|0\.0\.0\.0|host\.docker\.internal|db|postgres|redis|mysql|mongo)([:/]|$)''',
+  # Development placeholders that self-identify as insecure.
+  '''(?i)(dev|development|local|insecure|not[_-]?a[_-]?real)[_-]?[a-z0-9_]*(secret|password|key|token)''',
+  # Local development database user and password placeholder from repository bootstrap.
+  '''(?i)rolevia_dev''',
+]

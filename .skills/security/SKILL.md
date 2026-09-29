@@ -1,30 +1,44 @@
-# Skill: Security Review & Tenant Isolation
+# Skill: Multi-Tenant Security, Safety & Tenant Isolation
 
 ## Purpose
-Execute systematic security reviews on pull requests and proposed architectural changes.
 
-## When to use
-* Mandatory review before merging changes to auth, tenancy, file uploads, billing, or external connectors.
+Systematically audit, enforce, and test tenant isolation, Row-Level Security (RLS), secret prevention, PII redaction, and human-in-the-loop authorization gates across all services.
+
+## When to Use
+
+- Mandatory prior to merging any changes affecting authentication, tenancy, file vaults, database migrations, or third-party connectors.
+- When performing security code reviews.
 
 ## Inputs
-* Pull request diff, data classification tags, affected API endpoints.
+
+- Service code diff, database queries, API endpoints, data classification tags.
 
 ## Procedure
-1. Check tenant scoping: verify every database query and cache operation uses verified session context.
-2. Check authorization: verify `@RequirePermissions` or consent checks on mutating actions.
-3. Check input validation: verify Zod schemas on all incoming parameters.
-4. Check logging: verify no passwords, tokens, or plaintext PII are logged.
-5. Check external data: ensure all third-party inputs are treated as untrusted.
+
+1. **Verify Tenant Scoping & RLS**:
+   - Confirm every database interaction executes within an RLS transaction context (`SET LOCAL app.current_tenant_id = :tenantId`).
+   - Confirm Redis keys are prefixed with `tenant:{tenantId}:workspace:{workspaceId}`.
+   - Confirm vector searches include mandatory `tenant_id` and `workspace_id` filters.
+   - Never trust tenant or workspace IDs provided in HTTP query parameters or request bodies.
+2. **Audit Human-in-the-Loop (HITL) Gates**:
+   - Ensure consequential actions (submitting external job applications, sending emails, deleting data) require authenticated user approval tokens.
+3. **Secret & Credential Leak Prevention**:
+   - Ensure `.env*` files, private keys, and API tokens are ignored in `.gitignore`.
+   - Run local secret scans (`pnpm verify:secrets`).
+4. **PII Redaction**:
+   - Verify that loggers automatically mask PII (email, phone number, address, passwords, tokens).
+5. **SSRF & Injection Defense**:
+   - Validate connector URLs against domain allowlists; block loopback (`127.0.0.1`, `localhost`) and private subnet ranges.
 
 ## Validation
-* Run automated tenant isolation test suite and dependency vulnerability audit.
 
-## Common mistakes
-* Trusting `workspaceId` from route parameters without validating membership.
-* Logging full exception objects containing sensitive query parameters.
+- Run automated cross-tenant isolation regression tests (attempting cross-tenant data access).
+- Verify secret scanner passes with zero detected credentials.
 
-## Security considerations
-* Security regressions are blockers; do not merge code with unresolved security findings.
+## Security Considerations
 
-## Output expectations
-* Categorized findings report (`BLOCKER`, `HIGH`, `MEDIUM`, `LOW`, `NIT`) with remediation instructions.
+- Security regressions are blocking gates. Any potential cross-tenant leakage must halt deployment immediately.
+
+## Output Expectations
+
+- Audited endpoints with RLS enforcement and automated regression test coverage.

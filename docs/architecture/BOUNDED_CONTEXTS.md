@@ -11,28 +11,28 @@ graph TD
     Identity["1. Identity & Tenancy"] --> Authorization["2. Authorization (RBAC/ABAC)"]
     Authorization --> Candidate["3. Candidate & Career Profile"]
     Authorization --> Documents["4. Documents & Vault"]
-    
+
     Candidate --> CareerIntelligence["5. Career Intelligence Graph"]
     Documents --> ContextEngine["6. Context Engine (RAG/Embeddings)"]
     CareerIntelligence --> ContextEngine
-    
+
     JobDiscovery["7. Job Discovery & Connectors"] --> JobMatching["8. Job Matching"]
     ContextEngine --> JobMatching
-    
+
     JobMatching --> Applications["9. Application Studio"]
     Candidate --> Applications
     Documents --> Applications
-    
+
     Applications --> Workflow["10. Workflow Engine (Temporal)"]
     Workflow --> Automation["11. Automation & Actions"]
     Workflow --> Connectors["12. External Connectors"]
-    
+
     Workflow --> Email["13. Email Ingestion & Tracking"]
     Applications --> Interviews["14. Interview Intelligence"]
-    
+
     Applications --> Analytics["15. Analytics & Insights"]
     Identity --> Billing["16. Billing & Entitlements"]
-    
+
     Core["Cross-Cutting: Audit & AI Platform"] -.-> Applications
     Core -.-> Identity
 ```
@@ -62,5 +62,6 @@ graph TD
 ---
 
 ## Architectural Coupling Rules
-* **No Direct Foreign Context Mutation**: A context may only modify entities it owns. Cross-context mutations must emit asynchronous events or call domain services through explicitly defined contracts.
-* **Database Independence**: No service queries another context's internal tables directly. All interactions occur via published contracts (`packages/contracts`) or domain service interfaces.
+
+- **No Direct Foreign Context Mutation**: A context may only modify entities it owns. Cross-context mutations must emit asynchronous events or call domain services through explicitly defined contracts.
+- **Database Independence**: No service queries another context's internal tables directly. All interactions occur via published contracts (`packages/contracts`) or domain service interfaces.

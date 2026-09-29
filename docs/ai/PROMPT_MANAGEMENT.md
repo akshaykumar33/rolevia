@@ -5,12 +5,15 @@ Prompts are code artifacts subject to code review, version control, and regressi
 ---
 
 ## 1. Directory & Storage Standard
+
 All production prompt templates live in versioned files under `packages/ai-prompts/` or dedicated domain folders. Raw prompts must NEVER be hardcoded as ad-hoc strings in application controllers.
 
 ---
 
 ## 2. Prompt Header Contract
+
 Every prompt includes metadata:
+
 ```markdown
 ---
 prompt_id: resume_bullet_tailoring

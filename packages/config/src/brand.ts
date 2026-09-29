@@ -16,17 +16,19 @@ export interface BrandConfig {
 }
 
 export const BRAND_CONFIG: BrandConfig = {
-  codeName: 'Rolevia',
-  displayName: 'Rolevia',
-  tagline: 'AI Career Operating System',
-  legalEntity: 'Rolevia Technologies Inc.',
-  defaultSupportEmail: 'support@rolevia.internal',
-  securityContactEmail: 'security@rolevia.internal',
-  repositoryUrl: 'https://github.com/akshaykumar33/rolevia',
+  codeName: "Rolevia",
+  displayName: "Rolevia",
+  tagline: "AI Career Operating System",
+  legalEntity: "Rolevia Technologies Inc.",
+  defaultSupportEmail: "support@rolevia.internal",
+  securityContactEmail: "security@rolevia.internal",
+  repositoryUrl: "https://github.com/akshaykumar33/rolevia",
   missionStatement:
-    'A secure, multi-tenant AI Career Operating System that understands a candidate, maintains persistent career intelligence, discovers relevant jobs, evaluates fit, generates truthful tailored application material, assists or automates permitted application workflows, tracks outcomes, prepares candidates for interviews, and continuously improves the user\'s career strategy.',
+    "A secure, multi-tenant AI Career Operating System that understands a candidate, maintains persistent career intelligence, discovers relevant jobs, evaluates fit, generates truthful tailored application material, assists or automates permitted application workflows, tracks outcomes, prepares candidates for interviews, and continuously improves the user's career strategy.",
 } as const;
 
 export function getBrandedTitle(pageTitle?: string): string {
-  return pageTitle ? `${pageTitle} — ${BRAND_CONFIG.displayName}` : `${BRAND_CONFIG.displayName} — ${BRAND_CONFIG.tagline}`;
+  return pageTitle
+    ? `${pageTitle} — ${BRAND_CONFIG.displayName}`
+    : `${BRAND_CONFIG.displayName} — ${BRAND_CONFIG.tagline}`;
 }

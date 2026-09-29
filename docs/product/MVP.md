@@ -5,6 +5,7 @@ The initial release targets individual candidates seeking high-precision career 
 ---
 
 ## In Scope (MVP)
+
 1. **User Authentication & Personal Workspace**: Email/password + OAuth (GitHub/Google) with tenant isolation.
 2. **Career Intelligence Vault**: PDF resume ingestion, extraction into structured skills/experiences, and user confirmation UI.
 3. **Target Job Analysis**: Manual paste or URL ingestion of a Job Description with requirement parsing.
@@ -16,7 +17,8 @@ The initial release targets individual candidates seeking high-precision career 
 ---
 
 ## Deferred Beyond MVP
-* Automated third-party browser submissions (Phase 8)
-* Multi-seat organization / university placement admin portals (Phase 12)
-* Live audio mock interviews (Phase 10)
-* Multi-source real-time web scraping connectors (Phase 7)
+
+- Automated third-party browser submissions (Phase 8)
+- Multi-seat organization / university placement admin portals (Phase 12)
+- Live audio mock interviews (Phase 10)
+- Multi-source real-time web scraping connectors (Phase 7)

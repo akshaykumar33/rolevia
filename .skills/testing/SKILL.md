@@ -1,29 +1,33 @@
-# Skill: Automated Testing & Verification
+# Skill: Quality Assurance, Test Strategy & UX Definition of Done Verification
 
 ## Purpose
-Author and maintain reliable, deterministic test suites across all levels of the testing pyramid.
 
-## When to use
-* Implementing new features, fixing bugs (regression tests), or updating contracts.
+Enforce testing discipline across the monorepo, verifying functional completeness, component state coverage, accessibility compliance, and cross-tenant security.
+
+## When to Use
+
+- Writing tests for UI components, service logic, database interactions, or APIs.
+- Pre-merge delivery gate verification on pull requests.
 
 ## Inputs
-* Business requirements, edge cases, failure scenarios.
+
+- Component or service code, UX Definition of Done checklist, tenant isolation requirements.
 
 ## Procedure
-1. Write unit tests for pure domain functions and validation schemas.
-2. Write integration tests for API endpoints with transactional database rollbacks.
-3. Author explicit multi-tenancy tests asserting 403/404 on cross-workspace queries.
-4. Author prompt regression tests asserting that fictional skills are rejected by tailoring verifiers.
+
+1. **Component & UI Testing**:
+   - Write tests using Vitest and React Testing Library.
+   - Test all 10 applicable states: Initial Loading, Refetch Loading, Empty First-Run, Empty Filtered, Partial Failure, Error with Retry, Permission Denied, Offline, Success, Optimistic with Rollback.
+   - Run `axe-core` on rendered components to ensure zero WCAG 2.1 AA violations.
+2. **Tenant Isolation Testing**:
+   - Implement adversarial tests: have Tenant B attempt to query Tenant A's documents, profile, or applications.
+   - Assert zero data leaked across tenant boundaries.
+3. **Contract & Schema Verification**:
+   - Test that domain payloads strictly conform to Zod schemas in `@rolevia/contracts`.
+4. **Pre-Commit / Pre-Merge Gates**:
+   - Run `pnpm build`, `pnpm test`, and `pnpm verify:secrets`.
+   - Ensure commit messages adhere to Conventional Commits.
 
 ## Validation
-* Run test suite: `pnpm test`. All tests must pass deterministically without network flakiness.
 
-## Common mistakes
-* Testing implementation details rather than observable behavior.
-* Using shared mutable test fixtures that cause race conditions in parallel runs.
-
-## Security considerations
-* Never use real candidate PII or live credentials in test fixtures.
-
-## Output expectations
-* High-confidence, fast-executing test suites integrated into CI.
+- 100% passing test suites with zero skipped critical security or accessibility checks.

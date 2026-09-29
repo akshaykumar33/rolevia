@@ -1,17 +1,17 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const VerificationStatusSchema = z.enum([
-  'CONFIRMED_BY_USER',
-  'EXTRACTED_FROM_DOCUMENT',
-  'INFERRED_BY_AI',
-  'REJECTED_BY_USER',
+  "CONFIRMED_BY_USER",
+  "EXTRACTED_FROM_DOCUMENT",
+  "INFERRED_BY_AI",
+  "REJECTED_BY_USER",
 ]);
 export type VerificationStatus = z.infer<typeof VerificationStatusSchema>;
 
 export const SkillEvidenceSchema = z.object({
   id: z.string().uuid(),
   skillName: z.string().min(1),
-  category: z.string().default('TECHNICAL'),
+  category: z.string().default("TECHNICAL"),
   yearsOfExperience: z.number().min(0).optional(),
   verificationStatus: VerificationStatusSchema,
   sourceDocumentId: z.string().uuid().optional(),

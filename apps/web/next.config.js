@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@rolevia/config', '@rolevia/contracts', '@rolevia/ui'],
+  transpilePackages: ["@rolevia/config", "@rolevia/contracts", "@rolevia/ui"],
   eslint: {
     ignoreDuringBuilds: true,
   },

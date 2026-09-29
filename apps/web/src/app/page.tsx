@@ -1,121 +1,273 @@
-import { BRAND_CONFIG } from '@rolevia/config';
-import { DESIGN_TOKENS } from '@rolevia/ui';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { Header } from "../components/Header";
+import { HeroSection } from "../components/HeroSection";
+import { InteractiveCareerCockpit } from "../components/InteractiveCareerCockpit";
+import { AutonomousPortalAgent } from "../components/AutonomousPortalAgent";
+import { OnboardingSetupWizard } from "../components/OnboardingSetupWizard";
+import { ArchitectureGraphViewer } from "../components/ArchitectureGraphViewer";
+import { StateMachineInspector } from "../components/StateMachineInspector";
+import { CommandPalette } from "../components/CommandPalette";
+import { ConstellationCanvas } from "../components/ConstellationCanvas";
+import { soundEngine } from "../lib/soundEffects";
+import { motion, AnimatePresence } from "framer-motion";
+import { BRAND_CONFIG } from "@rolevia/config";
+import {
+  CdpSessionState,
+  loadCdpSession,
+  saveCdpSession,
+  DEFAULT_CDP_STATE,
+} from "../lib/cdpSessionStore";
 
 export default function HomePage() {
+  const [activeMainTab, setActiveMainTab] = useState<
+    "autopilot" | "cockpit" | "architecture"
+  >("autopilot");
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+
+  // Persistent CDP Session & Candidate Profile from localStorage / Resume sync config
+  const [cdpState, setCdpState] = useState<CdpSessionState>(DEFAULT_CDP_STATE);
+
+  useEffect(() => {
+    setCdpState(loadCdpSession());
+  }, []);
+
+  // Keyboard shortcut listener for Cmd+K and Tab numbers 1-3
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      } else if (!commandPaletteOpen && e.altKey) {
+        if (e.key === "1") setActiveMainTab("autopilot");
+        if (e.key === "2") setActiveMainTab("cockpit");
+        if (e.key === "3") setActiveMainTab("architecture");
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [commandPaletteOpen]);
+
+  const toggleTheme = () => {
+    document.documentElement.classList.toggle("dark");
+  };
+
   return (
-    <main className="min-h-screen flex flex-col justify-between p-6 md:p-12 max-w-6xl mx-auto">
-      {/* Top Header */}
-      <header className="flex items-center justify-between pb-6 border-b border-border-subtle">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-surface-raised border border-border-strong flex items-center justify-center font-mono font-bold text-accent text-sm shadow-sm">
-            R
-          </div>
-          <div>
-            <h1 className="font-semibold tracking-tight text-sm text-primary">
-              {BRAND_CONFIG.displayName}
-            </h1>
-            <p className="text-xs text-muted font-mono">
-              {BRAND_CONFIG.tagline}
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen flex flex-col bg-base text-primary transition-colors duration-200 selection:bg-accent/30 relative overflow-x-hidden">
+      {/* Ambient Neural Constellation Canvas */}
+      <ConstellationCanvas />
 
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-emerald-950/40 text-emerald-400 border border-emerald-800/50">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            PHASE 0: FOUNDATION
-          </span>
-        </div>
-      </header>
+      {/* Interactive Onboarding Setup Wizard */}
+      <OnboardingSetupWizard
+        isOpen={onboardingOpen}
+        onClose={() => setOnboardingOpen(false)}
+        onComplete={(updated) => {
+          setCdpState(updated);
+          saveCdpSession(updated);
+          setOnboardingOpen(false);
+        }}
+      />
 
-      {/* Main Status & Architecture Shell */}
-      <section className="my-auto py-12 space-y-8">
-        <div className="max-w-2xl space-y-4">
-          <div className="inline-block text-xs font-mono text-accent uppercase tracking-wider">
-            Repository Baseline Verified
+      {/* Global Command Palette */}
+      <CommandPalette
+        isOpen={commandPaletteOpen}
+        onClose={() => setCommandPaletteOpen(false)}
+        onNavigate={(tab) => {
+          soundEngine.playClick();
+          if (
+            tab === "autopilot" ||
+            tab === "cockpit" ||
+            tab === "architecture"
+          ) {
+            setActiveMainTab(tab);
+          }
+        }}
+        onToggleTheme={toggleTheme}
+        onOpenOnboarding={() => setOnboardingOpen(true)}
+      />
+
+      {/* Floating Glass Header */}
+      <Header
+        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+        onOpenOnboarding={() => setOnboardingOpen(true)}
+        activeTab={activeMainTab}
+        onTabChange={(tab) => {
+          soundEngine.playClick();
+          if (
+            tab === "autopilot" ||
+            tab === "cockpit" ||
+            tab === "architecture"
+          ) {
+            setActiveMainTab(tab);
+          }
+        }}
+      />
+
+      {/* Main Container */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-6 sm:space-y-8 relative z-10">
+        {/* Hero & CDP Overview */}
+        <HeroSection
+          onNavigateTab={(tab) => {
+            soundEngine.playClick();
+            if (
+              tab === "autopilot" ||
+              tab === "cockpit" ||
+              tab === "architecture"
+            ) {
+              setActiveMainTab(tab);
+            }
+          }}
+          onOpenOnboarding={() => setOnboardingOpen(true)}
+        />
+
+        {/* Clean Segmented Navigation */}
+        <section aria-label="Rolevia modules" className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-subtle pb-3">
+            <nav
+              className="flex items-center gap-1.5 p-1 rounded-2xl glass-panel max-w-full overflow-x-auto no-scrollbar"
+              aria-label="Application sections"
+            >
+              {[
+                {
+                  id: "autopilot" as const,
+                  label: "Autopilot Agent",
+                  badge: "CDP Port 9222",
+                  shortcut: "Alt+1",
+                },
+                {
+                  id: "cockpit" as const,
+                  label: "Career Studio",
+                  badge: "Fact Vault",
+                  shortcut: "Alt+2",
+                },
+                {
+                  id: "architecture" as const,
+                  label: "Engine & Security",
+                  badge: "Kernel RLS",
+                  shortcut: "Alt+3",
+                },
+              ].map((tab) => {
+                const isActive = activeMainTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => {
+                      soundEngine.playClick();
+                      setActiveMainTab(tab.id);
+                    }}
+                    className={`relative px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors duration-200 flex items-center gap-2 shrink-0 ${
+                      isActive
+                        ? "text-white"
+                        : "text-muted hover:text-primary hover:bg-surface-raised/60"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeTabPill"
+                        className="absolute inset-0 rounded-xl bg-accent shadow-md -z-10"
+                        transition={{
+                          type: "spring",
+                          stiffness: 450,
+                          damping: 32,
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10">{tab.label}</span>
+                    <span
+                      className={`relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                        isActive
+                          ? "bg-white/20 text-white"
+                          : "bg-surface-raised text-muted"
+                      }`}
+                    >
+                      {tab.badge}
+                    </span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            <div className="flex items-center gap-2 text-xs text-muted font-mono hidden md:flex">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 glow-dot animate-pulse" />
+                <span>Zero Fabrication Active</span>
+              </span>
+              <span>&bull;</span>
+              <span>CDP Bridge Ready</span>
+            </div>
           </div>
-          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-primary">
-            Engineering Operating System Active
-          </h2>
-          <p className="text-muted leading-relaxed text-sm md:text-base">
-            {BRAND_CONFIG.missionStatement}
-          </p>
-        </div>
 
-        {/* System Invariants Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-          <div className="p-5 rounded-xl bg-surface border border-border-subtle space-y-2.5 transition-colors hover:border-border-strong">
-            <div className="text-xs font-mono text-muted uppercase">Invariant 01</div>
-            <h3 className="text-sm font-medium text-primary">Zero Credential Fabrication</h3>
-            <p className="text-xs text-muted leading-relaxed">
-              AI agents are cryptographically bounded. Facts confirmed by the user hold absolute precedence over model inferences.
-            </p>
+          {/* Animated Module Container */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeMainTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {/* Tab 1: Autopilot Agent Mission Control (Chrome CDP + Multi-Portal Auto-Apply) */}
+              {activeMainTab === "autopilot" && (
+                <AutonomousPortalAgent
+                  onOpenOnboarding={() => setOnboardingOpen(true)}
+                  sessionState={cdpState}
+                />
+              )}
+
+              {/* Tab 2: Career Studio Simulator */}
+              {activeMainTab === "cockpit" && <InteractiveCareerCockpit />}
+
+              {/* Tab 3: Bounded Context Architecture & State Machine Security */}
+              {activeMainTab === "architecture" && (
+                <div className="space-y-6">
+                  <ArchitectureGraphViewer />
+                  <StateMachineInspector />
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="mt-auto border-t border-border-subtle glass py-5 transition-colors">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted font-mono">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 glow-dot" />
+            <span>{BRAND_CONFIG.legalEntity} &bull; Autonomous Career OS</span>
           </div>
-
-          <div className="p-5 rounded-xl bg-surface border border-border-subtle space-y-2.5 transition-colors hover:border-border-strong">
-            <div className="text-xs font-mono text-muted uppercase">Invariant 02</div>
-            <h3 className="text-sm font-medium text-primary">Strict Logical Multi-Tenancy</h3>
-            <p className="text-xs text-muted leading-relaxed">
-              Every database query, vector search, and cache key is scoped to verified tenant and workspace boundaries.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-xl bg-surface border border-border-subtle space-y-2.5 transition-colors hover:border-border-strong">
-            <div className="text-xs font-mono text-muted uppercase">Invariant 03</div>
-            <h3 className="text-sm font-medium text-primary">Human Agency & Consent</h3>
-            <p className="text-xs text-muted leading-relaxed">
-              Consequential third-party interactions and application submissions require explicit, authenticated human approval.
-            </p>
-          </div>
-        </div>
-
-        {/* Design Tokens & Theme Diagnostics */}
-        <div className="p-6 rounded-xl bg-surface border border-border-subtle space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-mono text-muted uppercase tracking-wider">
-              Design Token System Active
-            </h3>
-            <span className="text-xs font-mono text-muted">
-              Font: {DESIGN_TOKENS.typography.fontSans.split(',')[0]}
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+            <span
+              className="hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setActiveMainTab("autopilot")}
+            >
+              Autopilot Agent
+            </span>
+            <span
+              className="hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setActiveMainTab("cockpit")}
+            >
+              Career Studio
+            </span>
+            <span
+              className="hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setActiveMainTab("architecture")}
+            >
+              Architecture &amp; Safety
+            </span>
+            <span
+              className="hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setCommandPaletteOpen(true)}
+            >
+              Command Palette (⌘K)
             </span>
           </div>
-
-          <div className="flex flex-wrap gap-2 pt-1">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-raised border border-border-subtle text-xs">
-              <span className="w-3 h-3 rounded-full bg-accent" />
-              <span className="font-mono text-muted">--accent-primary</span>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-raised border border-border-subtle text-xs">
-              <span className="w-3 h-3 rounded-full bg-success" />
-              <span className="font-mono text-muted">--status-success</span>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-raised border border-border-subtle text-xs">
-              <span className="w-3 h-3 rounded-full bg-warning" />
-              <span className="font-mono text-muted">--status-warning</span>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-raised border border-border-subtle text-xs">
-              <span className="w-3 h-3 rounded-full bg-danger" />
-              <span className="font-mono text-muted">--status-danger</span>
-            </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-raised border border-border-subtle text-xs">
-              <span className="w-3 h-3 rounded-full bg-base border border-border-strong" />
-              <span className="font-mono text-muted">--bg-base</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer / Repository Provenance */}
-      <footer className="pt-6 border-t border-border-subtle flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted font-mono">
-        <div>
-          {BRAND_CONFIG.legalEntity} &bull; Phase 0 Foundation
-        </div>
-        <div className="flex items-center gap-4">
-          <span>Docs: /docs</span>
-          <span>ADRs: /docs/adr</span>
-          <span>Memory: /.ai</span>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

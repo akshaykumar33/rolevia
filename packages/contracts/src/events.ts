@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const DomainEventEnvelopeSchema = z.object({
   eventId: z.string().uuid(),
@@ -13,7 +13,7 @@ export const DomainEventEnvelopeSchema = z.object({
 });
 export type DomainEventEnvelope<T = Record<string, unknown>> = Omit<
   z.infer<typeof DomainEventEnvelopeSchema>,
-  'payload'
+  "payload"
 > & {
   payload: T;
 };

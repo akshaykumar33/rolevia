@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint",
+    "lint": "eslint . --max-warnings=0",
     "test": "echo \"Web app smoke test passed\"",
     "clean": "rm -rf .next dist"
   },
@@ -16,16 +16,25 @@
     "@rolevia/config": "workspace:*",
     "@rolevia/contracts": "workspace:*",
     "@rolevia/ui": "workspace:*",
+    "@types/gsap": "^3.0.0",
+    "canvas-confetti": "^1.9.4",
+    "framer-motion": "^13.4.6",
+    "gsap": "^3.15.0",
+    "lucide-react": "^1.48.0",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
-    "postcss": "^8.5.1",
+    "eslint": "^9.20.0",
+    "eslint-config-next": "^15.1.0",
+    "postcss": "^8.5.18",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.2"
   }

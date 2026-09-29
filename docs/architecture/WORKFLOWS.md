@@ -36,6 +36,7 @@ sequenceDiagram
 ---
 
 ## Invariants
-* **Determinism**: Workflow logic must remain deterministic. All network I/O, AI calls, and database updates occur exclusively within Temporal Activities.
-* **Idempotency**: Every activity requires an idempotency key derived from `workflowId + activityName + entityVersion`.
-* **Compensation**: If a multi-step operation fails midway (e.g. storage error after external call), compensating rollback activities are triggered to return the aggregate to a clean state.
+
+- **Determinism**: Workflow logic must remain deterministic. All network I/O, AI calls, and database updates occur exclusively within Temporal Activities.
+- **Idempotency**: Every activity requires an idempotency key derived from `workflowId + activityName + entityVersion`.
+- **Compensation**: If a multi-step operation fails midway (e.g. storage error after external call), compensating rollback activities are triggered to return the aggregate to a clean state.

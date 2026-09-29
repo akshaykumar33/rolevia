@@ -6,11 +6,39 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 4 * * 1' # Weekly Monday 4am UTC
+    - cron: "0 4 * * 1" # Weekly Monday 4am UTC
+
+permissions:
+  contents: read
 
 jobs:
-  audit:
-    name: Dependency Audit & Secret Scan
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # gitleaks-action lists the PR's commits via the REST API to scope its scan,
+    # which needs pull-requests: read. Without it the action 403s before scanning.
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout Full History
+        uses: actions/checkout@v4
+        with:
+          # Full history — a secret removed in a later commit still lives in an earlier one.
+          fetch-depth: 0
+
+      - name: Gitleaks — Scan Repository History
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG: .gitleaks.toml
+          # Uncomment once a Gitleaks Enterprise/Pro licence is configured for the org:
+          # GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  dependency-audit:
+    name: Dependency Audit
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -18,11 +46,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 10
 
-      - name: Run pnpm audit
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Audit Dependencies
         run: pnpm audit --audit-level=high
-        continue-on-error: true
+
+      - name: Secretlint — Scan Working Tree
+        run: pnpm exec secretlint --maskSecrets --secretlintignore .gitignore "**/*"

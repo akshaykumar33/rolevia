@@ -7,19 +7,20 @@ Multi-tenancy is enforced from Phase 0 as a foundational security requirement.
 ## Tenancy Model
 
 Rolevia employs a logical multi-tenant model:
-* **Tenant**: The root boundary (e.g. Individual Candidate Account, or Enterprise Organization).
-* **Workspace**: A localized partition within a Tenant (e.g., Default personal workspace, Cohort workspace in an organization).
-* **User**: An authenticated human identity holding memberships in one or more Workspaces with designated roles.
+
+- **Tenant**: The root boundary (e.g. Individual Candidate Account, or Enterprise Organization).
+- **Workspace**: A localized partition within a Tenant (e.g., Default personal workspace, Cohort workspace in an organization).
+- **User**: An authenticated human identity holding memberships in one or more Workspaces with designated roles.
 
 ```mermaid
 graph TD
     Tenant["Tenant (Account Root)"] --> WS1["Workspace A (Personal)"]
     Tenant --> WS2["Workspace B (Cohort / Team)"]
-    
+
     WS1 --> Cand1["Candidate Profile"]
     WS1 --> Doc1["Document Vault"]
     WS1 --> App1["Applications"]
-    
+
     User["User Identity"] -.->|Membership + Role| WS1
     User -.->|Membership + Role| WS2
 ```

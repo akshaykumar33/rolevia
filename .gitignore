@@ -16,6 +16,42 @@ out/
 .env.*.local
 !.env.example
 
+# Secrets, keys & credentials — never commit these.
+# The pre-commit guard blocks them too; this is defence in depth.
+# See docs/engineering/GIT_WORKFLOW.md section 3.
+*.pem
+*.key
+*.ppk
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.asc
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+credentials
+credentials.json
+serviceAccount*.json
+.npmrc
+.pypirc
+.netrc
+.aws/
+*.kubeconfig
+kubeconfig
+*.tfstate
+*.tfstate.*
+secrets.yml
+secrets.yaml
+secrets.json
+
+# Database dumps (may contain production PII)
+*.sqlite
+*.sqlite3
+*.dump
+*.sql.gz
+
 # Logs
 logs/
 *.log
