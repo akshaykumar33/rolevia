@@ -69,4 +69,6 @@ regexes = [
   '''(?i)://[^\s:@/]+:[^\s@/]+@(localhost|127\.0\.0\.1|0\.0\.0\.0|host\.docker\.internal|db|postgres|redis|mysql|mongo)([:/]|$)''',
   # Development placeholders that self-identify as insecure.
   '''(?i)(dev|development|local|insecure|not[_-]?a[_-]?real)[_-]?[a-z0-9_]*(secret|password|key|token)''',
+  # Local development database user and password placeholder from repository bootstrap.
+  '''(?i)rolevia_dev''',
 ]
