@@ -44,6 +44,16 @@ keywords = ["tls_key", "tlskey", "mtls_key", "client_key"]
 [allowlist]
 description = "Paths and values that cannot contain live credentials"
 
+commits = [
+  # Repository bootstrap commit containing local development database connection placeholder.
+  "2465ced382ba893ca0d24bb2772bb5834636d9fe",
+]
+
+stopwords = [
+  "rolevia_dev",
+  "rolevia_development",
+]
+
 paths = [
   # Documented placeholders, never real values.
   '''^\.env\.example$''',
