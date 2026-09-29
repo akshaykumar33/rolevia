@@ -38,7 +38,7 @@ export default function HomePage() {
     coverLetterStyle: "technical_direct",
     resumeText:
       "Staff Platform Engineer with 9+ years architecting event-driven microservices processing 120,000 req/min. Deep PostgreSQL performance tuning, RLS tenant isolation, and pgvector semantic retrieval pipelines.",
-    portalSessionKey: "session_token_gh_ats_9941a0b3f81e",
+    portalSessionKey: "portal-session-ref-greenhouse",
     dailyApplicationCap: 5,
   });
 

@@ -77,7 +77,7 @@ export function OnboardingSetupWizard({
   );
 
   const [portalSessionKey, setPortalSessionKey] = useState<string>(
-    "session_token_gh_ats_9941a0b3f81e",
+    "portal-session-ref-greenhouse",
   );
   const [dailyApplicationCap, setDailyApplicationCap] = useState<number>(5);
   const [selectedPortals, setSelectedPortals] = useState<string[]>([

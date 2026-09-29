@@ -38,7 +38,7 @@ interface MockPortalStatus {
   id: PortalPlatform;
   name: string;
   connected: boolean;
-  sessionToken: string;
+  sessionRef: string;
   latencyMs: number;
   lastSync: string;
   color: string;
@@ -49,7 +49,7 @@ const INITIAL_PORTALS: MockPortalStatus[] = [
     id: "greenhouse",
     name: "Greenhouse ATS",
     connected: true,
-    sessionToken: "gh_live_auth_9941a0b3f81e",
+    sessionRef: "portal-ref-greenhouse-live",
     latencyMs: 14,
     lastSync: "2 mins ago",
     color: "emerald",
@@ -58,7 +58,7 @@ const INITIAL_PORTALS: MockPortalStatus[] = [
     id: "ashby",
     name: "Ashby HQ",
     connected: true,
-    sessionToken: "ashby_ses_41e0b92d77a",
+    sessionRef: "portal-ref-ashby-live",
     latencyMs: 19,
     lastSync: "5 mins ago",
     color: "sky",
@@ -67,7 +67,7 @@ const INITIAL_PORTALS: MockPortalStatus[] = [
     id: "lever",
     name: "Lever ATS",
     connected: true,
-    sessionToken: "lever_jwt_8801c3bf42",
+    sessionRef: "portal-ref-lever-live",
     latencyMs: 22,
     lastSync: "8 mins ago",
     color: "amber",
@@ -76,7 +76,7 @@ const INITIAL_PORTALS: MockPortalStatus[] = [
     id: "linkedin",
     name: "LinkedIn EasyApply",
     connected: true,
-    sessionToken: "li_oauth_token_77a91c",
+    sessionRef: "portal-ref-linkedin-live",
     latencyMs: 34,
     lastSync: "12 mins ago",
     color: "blue",
@@ -85,7 +85,7 @@ const INITIAL_PORTALS: MockPortalStatus[] = [
     id: "workday",
     name: "Workday Enterprise",
     connected: false,
-    sessionToken: "expired_token_wkdy",
+    sessionRef: "portal-ref-workday-unlinked",
     latencyMs: 0,
     lastSync: "Awaiting 2FA token",
     color: "rose",
