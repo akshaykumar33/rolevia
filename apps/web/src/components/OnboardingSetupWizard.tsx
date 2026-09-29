@@ -3,42 +3,37 @@
 import React, { useState } from "react";
 import confetti from "canvas-confetti";
 import {
-  Key,
-  Briefcase,
   Upload,
   CheckCircle2,
-  Shield,
   ArrowRight,
   ArrowLeft,
   X,
-  FileText,
-  Lock,
   Zap,
   Eye,
   EyeOff,
+  Radio,
+  Terminal,
+  Copy,
+  Check,
+  User,
+  Mail,
+  Phone,
+  MapPin,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { soundEngine } from "../lib/soundEffects";
 import { CustomSelect, SelectOption } from "./CustomSelect";
+import {
+  CandidateProfile,
+  CdpSessionState,
+  DEFAULT_CANDIDATE_PROFILE,
+  saveCdpSession,
+} from "../lib/cdpSessionStore";
 
 interface OnboardingSetupWizardProps {
   isOpen: boolean;
   onClose: () => void;
-  onComplete: (data: OnboardingData) => void;
-}
-
-export interface OnboardingData {
-  provider: "anthropic" | "openai" | "gemini" | "deepseek" | "local_mock";
-  apiKey: string;
-  fullName: string;
-  email: string;
-  targetDomain: string;
-  seniority: string;
-  salaryFloor: number;
-  coverLetterStyle: string;
-  resumeText: string;
-  portalSessionKey: string;
-  dailyApplicationCap: number;
+  onComplete: (data: CdpSessionState) => void;
 }
 
 export function OnboardingSetupWizard({
@@ -49,82 +44,103 @@ export function OnboardingSetupWizard({
   const [step, setStep] = useState<number>(1);
   const totalSteps = 4;
 
-  // Form State
+  // Step 1: AI Provider
   const [provider, setProvider] = useState<
     "anthropic" | "openai" | "gemini" | "deepseek" | "local_mock"
   >("anthropic");
-  const [apiKey, setApiKey] = useState<string>(
-    "mock-provider-client-session-token",
-  );
+  const [apiKey, setApiKey] = useState<string>("");
   const [showApiKey, setShowApiKey] = useState<boolean>(false);
-  const [keyValidated, setKeyValidated] = useState<boolean>(true);
 
-  const [fullName, setFullName] = useState<string>("Alex Rivera");
-  const [email, setEmail] = useState<string>("alex.rivera@engineercore.io");
-  const [targetDomain, setTargetDomain] = useState<string>(
-    "Distributed Systems & High-Throughput Microservices",
+  // Step 2: Candidate Profile
+  const [fullName, setFullName] = useState<string>(
+    DEFAULT_CANDIDATE_PROFILE.fullName,
   );
-  const [seniority, setSeniority] = useState<string>("Staff");
-  const [salaryFloor, setSalaryFloor] = useState<number>(210000);
+  const [email, setEmail] = useState<string>(DEFAULT_CANDIDATE_PROFILE.email);
+  const [phone, setPhone] = useState<string>(DEFAULT_CANDIDATE_PROFILE.phone);
+  const [location, setLocation] = useState<string>(
+    DEFAULT_CANDIDATE_PROFILE.location,
+  );
+  const [targetDomain, setTargetDomain] = useState<string>(
+    DEFAULT_CANDIDATE_PROFILE.targetDomain,
+  );
+  const [seniority, setSeniority] = useState<string>(
+    DEFAULT_CANDIDATE_PROFILE.seniority,
+  );
+  const [salaryFloor, setSalaryFloor] = useState<number>(
+    DEFAULT_CANDIDATE_PROFILE.salaryFloorUsd,
+  );
 
+  // Step 3: Chrome Remote Debugging (CDP) & Portal Connect (from d:\pro\Resume)
+  const [cdpPort, setCdpPort] = useState<number>(9222);
+  const [cdpHost] = useState<string>("127.0.0.1");
+  const [cdpProbed, setCdpProbed] = useState<boolean>(true);
+  const [isProbing, setIsProbing] = useState<boolean>(false);
+  const [copiedLaunchCmd, setCopiedLaunchCmd] = useState<boolean>(false);
+  const [portals, setPortals] = useState({
+    naukri: true,
+    cutshort: true,
+    linkedin: true,
+    wellfound: true,
+    greenhouse: true,
+    lever: true,
+    ashby: true,
+  });
+
+  // Step 4: Resume & Quota
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(
+    "Akshaykumar_Patil_Resume.pdf",
+  );
+  const [dailyQuota, setDailyQuota] = useState<number>(5);
   const [coverLetterStyle, setCoverLetterStyle] =
     useState<string>("technical_direct");
-  const [resumeText, setResumeText] = useState<string>(
-    "Staff Platform Engineer with 9+ years architecting event-driven microservices processing 120,000 req/min. Deep PostgreSQL performance tuning, RLS tenant isolation, and pgvector semantic retrieval pipelines.",
-  );
-  const [uploadedFileName, setUploadedFileName] = useState<string | null>(
-    "Master_Resume_2026.pdf",
-  );
 
-  const [portalSessionKey, setPortalSessionKey] = useState<string>(
-    "portal-session-ref-greenhouse",
-  );
-  const [dailyApplicationCap, setDailyApplicationCap] = useState<number>(5);
-  const [selectedPortals, setSelectedPortals] = useState<string[]>([
-    "greenhouse",
-    "lever",
-    "ashby",
-    "linkedin",
-  ]);
+  const launchCommand = `Start-Process chrome.exe -ArgumentList "--remote-debugging-port=${cdpPort}", "--restore-last-session"`;
+
+  const handleCopyCommand = () => {
+    soundEngine.playClick();
+    navigator.clipboard.writeText(launchCommand);
+    setCopiedLaunchCmd(true);
+    setTimeout(() => setCopiedLaunchCmd(false), 2000);
+  };
+
+  const handleProbeCdp = () => {
+    soundEngine.playClick();
+    setIsProbing(true);
+    setTimeout(() => {
+      setIsProbing(false);
+      setCdpProbed(true);
+      soundEngine.playSuccess();
+    }, 900);
+  };
 
   const domainOptions = [
     {
       id: "Distributed Systems & High-Throughput Microservices",
-      label: "Distributed Systems & Microservices",
+      label: "Distributed Systems & Cloud Architecture",
       icon: "⚡",
     },
     {
       id: "AI Systems Architecture & RAG Pipelines",
-      label: "AI Systems & RAG Pipelines",
+      label: "AI Systems, RAG & Edge ML",
       icon: "🧠",
     },
     {
       id: "Fullstack Engineering & Realtime Sync",
-      label: "Fullstack & Realtime Client Sync",
+      label: "Fullstack, Realtime Web & MERN",
       icon: "🔄",
     },
     {
       id: "Cloud Infrastructure, SRE & Kubernetes",
-      label: "Cloud Infra, SRE & Kubernetes",
+      label: "DevOps, SRE, Observability & Cloud",
       icon: "☁️",
-    },
-    {
-      id: "Database Engines & High-Scale Analytics",
-      label: "Database Internals & Data Systems",
-      icon: "💾",
-    },
-    {
-      id: "Security Engineering, Kernel RLS & Auth",
-      label: "Security, Cryptography & RLS",
-      icon: "🛡️",
     },
   ];
 
   const seniorityOptions: SelectOption[] = [
     {
       value: "Senior",
-      label: "Senior Engineer",
-      sublabel: "5-8 yrs experience",
+      label: "Senior Software Engineer",
+      sublabel: "4-8 yrs experience",
       badge: "L5",
     },
     {
@@ -135,228 +151,193 @@ export function OnboardingSetupWizard({
     },
     {
       value: "Principal",
-      label: "Principal Architect",
+      label: "Principal Systems Architect",
       sublabel: "12+ yrs experience",
       badge: "L7",
     },
-    {
-      value: "Engineering Lead",
-      label: "Engineering Manager / Lead",
-      sublabel: "Team Leadership & Scale",
-      badge: "M1",
-    },
   ];
 
-  const handleNextStep = () => {
-    soundEngine.playClick();
-    if (step < totalSteps) {
-      setStep(step + 1);
-    } else {
-      // Completed setup
-      soundEngine.playSuccess();
-      confetti({
-        particleCount: 100,
-        spread: 80,
-        origin: { y: 0.5 },
-        colors: ["#f08c42", "#d46b28", "#34d399", "#fbbf24"],
-      });
-      onComplete({
-        provider,
-        apiKey,
-        fullName,
-        email,
-        targetDomain,
-        seniority,
-        salaryFloor,
-        coverLetterStyle,
-        resumeText,
-        portalSessionKey,
-        dailyApplicationCap,
-      });
-    }
-  };
+  const handleFinish = () => {
+    soundEngine.playSuccess();
+    const updatedProfile: CandidateProfile = {
+      fullName,
+      email,
+      phone,
+      location,
+      portfolioUrl: DEFAULT_CANDIDATE_PROFILE.portfolioUrl,
+      githubUrl: DEFAULT_CANDIDATE_PROFILE.githubUrl,
+      linkedinUrl: DEFAULT_CANDIDATE_PROFILE.linkedinUrl,
+      headline: DEFAULT_CANDIDATE_PROFILE.headline,
+      keySkills: DEFAULT_CANDIDATE_PROFILE.keySkills,
+      summary: DEFAULT_CANDIDATE_PROFILE.summary,
+      targetDomain,
+      seniority,
+      salaryFloorUsd: salaryFloor,
+    };
 
-  const handlePrevStep = () => {
-    soundEngine.playClick();
-    if (step > 1) setStep(step - 1);
-  };
+    const finalState: CdpSessionState = {
+      cdpPort,
+      cdpHost,
+      isConnected: true,
+      activeProfile: updatedProfile,
+      portals,
+      dailyQuota,
+      matchScoreFloor: 90,
+      remoteOnly: true,
+      emergencyHalt: false,
+      lastSyncAt: "Just now",
+    };
 
-  const togglePortal = (portalId: string) => {
-    soundEngine.playSelect();
-    setSelectedPortals((prev) =>
-      prev.includes(portalId)
-        ? prev.filter((p) => p !== portalId)
-        : [...prev, portalId],
-    );
+    saveCdpSession(finalState);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ["#c2410c", "#d97706", "#10b981"],
+    });
+
+    onComplete(finalState);
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Rolevia System Setup & Walkthrough"
-        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md overflow-y-auto"
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md overflow-y-auto">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 15 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 15 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        className="w-full max-w-2xl bg-surface border border-border-strong rounded-3xl shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh]"
       >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.94, y: 15 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.94, y: 15 }}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
-          className="w-full max-w-2xl rounded-3xl glass-panel p-6 sm:p-7 border border-border-strong space-y-6 shadow-2xl relative my-auto bg-surface/98"
-        >
-          {/* Top Progress & Close Bar */}
-          <div className="flex items-center justify-between border-b border-border-subtle pb-4">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-accent glow-dot animate-pulse" />
-              <div>
-                <h3 className="font-display text-lg sm:text-xl font-bold text-primary">
-                  Rolevia Studio Setup &amp; Profiling
-                </h3>
-                <span className="text-[11px] font-mono text-muted">
-                  Step {step} of {totalSteps} &bull;{" "}
-                  {step === 1 && "API Key & Model Architecture"}
-                  {step === 2 && "Domain, Seniority & Expectations"}
-                  {step === 3 && "Resume Ingestion & Cover Letter Tone"}
-                  {step === 4 && "Autonomous Portal Agent & Session"}
-                </span>
-              </div>
+        {/* Modal Header */}
+        <div className="p-4 sm:p-6 border-b border-border-subtle flex items-center justify-between bg-surface-raised/40">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-accent to-amber-600 flex items-center justify-center text-white shadow-md">
+              <Zap className="w-5 h-5" />
             </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                soundEngine.playClick();
-                onClose();
-              }}
-              className="w-8 h-8 rounded-full glass-pill flex items-center justify-center text-muted hover:text-primary active:scale-90 transition-transform"
-              aria-label="Close setup modal"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div>
+              <h3 className="font-display text-lg sm:text-xl font-bold text-primary">
+                Rolevia Setup &amp; Browser Connector
+              </h3>
+              <p className="text-xs text-muted font-sans">
+                Step {step} of {totalSteps}:{" "}
+                {step === 1 && "AI Inference Engine"}
+                {step === 2 && "Candidate Profile & Domain"}
+                {step === 3 && "Chrome Remote Debugging (CDP)"}
+                {step === 4 && "Resume & Application Policy"}
+              </p>
+            </div>
           </div>
 
-          {/* Stepper Progress Indicator */}
-          <div className="grid grid-cols-4 gap-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i <= step
-                    ? "bg-gradient-to-r from-accent to-amber-500"
-                    : "bg-surface-raised border border-border-subtle"
-                }`}
-              />
-            ))}
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              onClose();
+            }}
+            className="w-8 h-8 rounded-full glass-pill flex items-center justify-center text-muted hover:text-primary transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
 
-          {/* Step 1: API Key & Model Provider Setup */}
+        {/* Progress Stepper Bar */}
+        <div className="px-6 pt-3 flex gap-2">
+          {Array.from({ length: totalSteps }).map((_, idx) => (
+            <div
+              key={idx}
+              className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                idx + 1 <= step ? "bg-accent" : "bg-surface-raised"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Step Body */}
+        <div className="p-4 sm:p-6 space-y-5 overflow-y-auto flex-1">
+          {/* STEP 1: AI Provider */}
           {step === 1 && (
             <motion.div
-              key="step-1"
-              initial={{ opacity: 0, x: 10 }}
+              key="step1"
+              initial={{ opacity: 0, x: 8 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
               className="space-y-4"
             >
-              <div className="space-y-1">
-                <h4 className="font-display text-base font-bold text-primary flex items-center gap-2">
-                  <Key className="w-4 h-4 text-accent" />
-                  Connect Your AI Intelligence Engine
+              <div>
+                <h4 className="font-display text-base font-bold text-primary">
+                  Select AI Reasoning Engine
                 </h4>
-                <p className="text-xs text-muted font-sans leading-relaxed">
-                  Rolevia enforces the <strong>Truthfulness Invariant</strong>.
-                  Your API keys are validated in-memory and client-scoped; they
-                  never leave your tenant isolation boundary.
+                <p className="text-xs text-muted mt-0.5">
+                  Power resume tailoring and cover letter synthesis with your
+                  preferred LLM provider.
                 </p>
               </div>
 
-              {/* Provider Selection Cards */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                 {[
                   {
                     id: "anthropic" as const,
-                    name: "Claude 3.5",
-                    desc: "Anthropic Sonnet",
+                    name: "Claude 3.7",
                     badge: "Recommended",
                   },
+                  { id: "openai" as const, name: "GPT-4o", badge: "Fast" },
                   {
-                    id: "openai" as const,
-                    name: "GPT-4o",
-                    desc: "OpenAI Omni",
-                    badge: "Fast",
+                    id: "gemini" as const,
+                    name: "Gemini 2.5",
+                    badge: "Multimodal",
                   },
                   {
                     id: "deepseek" as const,
-                    name: "DeepSeek V3",
-                    desc: "Open Weights",
-                    badge: "Low Cost",
+                    name: "DeepSeek R1",
+                    badge: "Reasoning",
                   },
                   {
                     id: "local_mock" as const,
-                    name: "Local Sandbox",
-                    desc: "Zero-Cost Simulation",
-                    badge: "Free",
+                    name: "Local Mock",
+                    badge: "Zero Cost",
                   },
-                ].map((p) => {
-                  const isSelected = provider === p.id;
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => {
-                        soundEngine.playSelect();
-                        setProvider(p.id);
-                      }}
-                      className={`p-3 rounded-2xl border text-left transition-all duration-200 active:scale-95 ${
-                        isSelected
-                          ? "bg-accent/15 border-accent shadow-md scale-[1.02]"
-                          : "bg-surface-raised/50 border-border-subtle hover:border-border-strong text-muted"
-                      }`}
-                    >
-                      <div className="text-xs font-bold text-primary font-display">
-                        {p.name}
-                      </div>
-                      <div className="text-[10px] text-muted font-mono">
-                        {p.desc}
-                      </div>
-                      <span
-                        className={`inline-block mt-1 text-[9px] font-mono px-1.5 py-0.2 rounded-full font-bold ${
-                          isSelected
-                            ? "bg-accent text-white"
-                            : "bg-surface text-muted"
-                        }`}
-                      >
-                        {p.badge}
-                      </span>
-                    </button>
-                  );
-                })}
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setProvider(item.id);
+                      soundEngine.playSelect();
+                    }}
+                    className={`p-3 rounded-2xl border text-left transition-all ${
+                      provider === item.id
+                        ? "bg-accent/15 border-accent text-primary shadow-sm"
+                        : "bg-surface-raised/40 border-border-subtle text-muted hover:text-primary"
+                    }`}
+                  >
+                    <div className="text-xs font-bold text-primary">
+                      {item.name}
+                    </div>
+                    <div className="text-[10px] text-accent font-mono mt-0.5">
+                      {item.badge}
+                    </div>
+                  </button>
+                ))}
               </div>
 
-              {/* API Key Input */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                  Provider API Key
+              <div className="space-y-1.5 pt-2">
+                <label className="text-xs font-semibold text-primary block">
+                  API Key or Client Token (Stored in LocalStorage)
                 </label>
                 <div className="relative">
                   <input
                     type={showApiKey ? "text" : "password"}
                     value={apiKey}
-                    onChange={(e) => {
-                      setApiKey(e.target.value);
-                      setKeyValidated(e.target.value.length > 8);
-                    }}
-                    placeholder="Enter client provider API token..."
-                    className="w-full px-3.5 py-2.5 rounded-xl glass-input text-xs font-mono outline-none pr-10"
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder="Enter provider API token (or leave empty for sandbox mock)..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface-raised border border-border-subtle text-xs font-mono outline-none pr-10 focus:border-accent"
                   />
                   <button
                     type="button"
                     onClick={() => setShowApiKey(!showApiKey)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-primary"
-                    aria-label={showApiKey ? "Hide API key" : "Show API key"}
                   >
                     {showApiKey ? (
                       <EyeOff className="w-3.5 h-3.5" />
@@ -365,405 +346,431 @@ export function OnboardingSetupWizard({
                     )}
                   </button>
                 </div>
-                {keyValidated && (
-                  <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-mono">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>
-                      Key format verified &bull; Client memory encrypted
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Invariant Explanation Banner */}
-              <div className="p-3.5 rounded-2xl bg-surface-raised/70 border border-border-subtle flex items-start gap-2.5 text-xs text-muted font-sans">
-                <Shield className="w-4 h-4 text-accent shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-primary">
-                    Zero-Fabrication Architecture:
-                  </strong>{" "}
-                  Rolevia prompts are compiled with strict Zod contracts. The
-                  model is forbidden from inventing skills, experiences, or
-                  claims outside your verified vault.
-                </div>
+                <p className="text-[11px] text-muted">
+                  Client-side encrypted. Keys never touch intermediate proxy
+                  servers.
+                </p>
               </div>
             </motion.div>
           )}
 
-          {/* Step 2: Domain, Seniority & Salary Questionnaire */}
+          {/* STEP 2: Candidate Profile & Domain */}
           {step === 2 && (
             <motion.div
-              key="step-2"
-              initial={{ opacity: 0, x: 10 }}
+              key="step2"
+              initial={{ opacity: 0, x: 8 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
               className="space-y-4"
             >
-              <div className="space-y-1">
-                <h4 className="font-display text-base font-bold text-primary flex items-center gap-2">
-                  <Briefcase className="w-4 h-4 text-accent" />
-                  Target Specialization &amp; Seniority
+              <div>
+                <h4 className="font-display text-base font-bold text-primary">
+                  Candidate Profile &amp; Domain Focus
                 </h4>
-                <p className="text-xs text-muted font-sans leading-relaxed">
-                  Select your primary engineering craft domain and target
-                  compensation bounds.
+                <p className="text-xs text-muted mt-0.5">
+                  Rolevia uses this baseline to tailor job applications and
+                  verify credentials.
                 </p>
               </div>
 
-              {/* Domain Grid Selection */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                  Target Engineering Domain
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {domainOptions.map((dom) => {
-                    const isSelected = targetDomain === dom.id;
-                    return (
-                      <button
-                        key={dom.id}
-                        type="button"
-                        onClick={() => {
-                          soundEngine.playSelect();
-                          setTargetDomain(dom.id);
-                        }}
-                        className={`p-3 rounded-2xl border text-left transition-all duration-200 flex items-center gap-2.5 ${
-                          isSelected
-                            ? "bg-accent/15 border-accent text-primary shadow-sm"
-                            : "bg-surface-raised/40 border-border-subtle hover:border-border-strong text-muted"
-                        }`}
-                      >
-                        <span className="text-base">{dom.icon}</span>
-                        <div className="truncate">
-                          <div className="text-xs font-bold truncate text-primary">
-                            {dom.label}
-                          </div>
-                          <div className="text-[10px] font-mono text-muted truncate">
-                            pgvector clustered
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
+              {/* Personal Details Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-primary flex items-center gap-1.5">
+                    <User className="w-3.5 h-3.5 text-accent" />
+                    <span>Full Name</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface-raised border border-border-subtle text-xs outline-none focus:border-accent"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-primary flex items-center gap-1.5">
+                    <Mail className="w-3.5 h-3.5 text-accent" />
+                    <span>Contact Email</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface-raised border border-border-subtle text-xs outline-none focus:border-accent"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-primary flex items-center gap-1.5">
+                    <Phone className="w-3.5 h-3.5 text-accent" />
+                    <span>Phone Number</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface-raised border border-border-subtle text-xs outline-none focus:border-accent"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-primary flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-accent" />
+                    <span>Location</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface-raised border border-border-subtle text-xs outline-none focus:border-accent"
+                  />
                 </div>
               </div>
 
-              {/* Seniority Picker & Salary Input */}
+              {/* Target Domain Cards */}
+              <div className="space-y-2 pt-1">
+                <label className="text-xs font-semibold text-primary block">
+                  Target Domain Specialization
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {domainOptions.map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => {
+                        setTargetDomain(opt.id);
+                        soundEngine.playSelect();
+                      }}
+                      className={`p-3 rounded-2xl border text-left transition-all ${
+                        targetDomain === opt.id
+                          ? "bg-accent/15 border-accent text-primary shadow-sm"
+                          : "bg-surface-raised/40 border-border-subtle text-muted hover:text-primary"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>{opt.icon}</span>
+                        <span className="text-xs font-bold text-primary">
+                          {opt.label}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Seniority & Salary */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <div className="space-y-1">
-                  <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                    Seniority Level
+                  <label className="text-xs font-semibold text-primary block">
+                    Target Seniority
                   </label>
                   <CustomSelect
                     options={seniorityOptions}
                     value={seniority}
                     onChange={(val) => setSeniority(val)}
-                    align="left"
-                    ariaLabel="Select target seniority"
-                    className="w-full"
+                    ariaLabel="Select seniority"
                   />
                 </div>
-
                 <div className="space-y-1">
-                  <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                    Target Compensation Floor (USD/yr)
+                  <label className="text-xs font-semibold text-primary block">
+                    Salary Floor (USD/yr)
                   </label>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted font-mono text-xs">
+                    <span className="absolute left-3 top-2 text-xs font-mono text-muted">
                       $
                     </span>
                     <input
                       type="number"
                       value={salaryFloor}
                       onChange={(e) => setSalaryFloor(Number(e.target.value))}
-                      className="w-full pl-7 pr-3.5 py-2 rounded-xl glass-input text-xs font-mono outline-none"
+                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-surface-raised border border-border-subtle text-xs font-mono outline-none focus:border-accent"
                     />
                   </div>
                 </div>
               </div>
-
-              {/* Personal Contact Info */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div className="space-y-1">
-                  <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                    Candidate Full Name
-                  </label>
-                  <input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl glass-input text-xs outline-none"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                    Contact Email (for Portals)
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl glass-input text-xs outline-none"
-                  />
-                </div>
-              </div>
             </motion.div>
           )}
 
-          {/* Step 3: Reference Resume & Cover Letter Preferences */}
+          {/* STEP 3: Chrome Remote Debugging (CDP) & Portals */}
           {step === 3 && (
             <motion.div
-              key="step-3"
-              initial={{ opacity: 0, x: 10 }}
+              key="step3"
+              initial={{ opacity: 0, x: 8 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
               className="space-y-4"
             >
-              <div className="space-y-1">
+              <div>
                 <h4 className="font-display text-base font-bold text-primary flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-accent" />
-                  Reference Resume Ingestion &amp; Cover Letter Tone
+                  <Terminal className="w-4 h-4 text-accent" />
+                  <span>Chrome Remote Debugging (CDP) Bridge</span>
                 </h4>
-                <p className="text-xs text-muted font-sans leading-relaxed">
-                  Provide your baseline career history. Facts are parsed into
-                  cryptographic source chunks with 100% provenance verification.
+                <p className="text-xs text-muted mt-0.5">
+                  Inspired by the <code>Resume</code> sync architecture: connect
+                  directly to your active Chrome browser on port 9222 with zero
+                  re-authentication.
                 </p>
               </div>
 
-              {/* Resume Ingestion: Upload Dropzone or Paste Text */}
-              <div className="space-y-2">
-                <div
-                  onClick={() => {
-                    soundEngine.playClick();
-                    setUploadedFileName(
-                      uploadedFileName
-                        ? null
-                        : "Alex_Rivera_Verified_Resume_2026.pdf",
-                    );
-                  }}
-                  className="p-4 rounded-2xl border-2 border-dashed border-accent/40 bg-surface-raised/40 text-center space-y-2 hover:border-accent transition-colors cursor-pointer"
-                >
-                  <Upload className="w-6 h-6 mx-auto text-accent" />
-                  <div className="text-xs font-bold text-primary font-display">
-                    {uploadedFileName
-                      ? `Attached: ${uploadedFileName}`
-                      : "Drag & Drop Resume (PDF, DOCX, TXT)"}
-                  </div>
-                  <p className="text-[10px] text-muted font-mono">
-                    Instant client-side chunking &bull; SHA-256 fingerprinting
-                  </p>
+              {/* 1-Click Launch Script Snippet */}
+              <div className="p-3.5 rounded-2xl bg-base border border-border-subtle space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-primary">
+                  <span className="font-mono text-[11px] text-accent">
+                    Windows PowerShell One-Liner
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyCommand}
+                    className="px-2.5 py-1 rounded-lg bg-surface-raised border border-border-subtle text-[11px] font-mono flex items-center gap-1.5 hover:text-accent transition-colors"
+                  >
+                    {copiedLaunchCmd ? (
+                      <Check className="w-3 h-3 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                    <span>{copiedLaunchCmd ? "Copied!" : "Copy Command"}</span>
+                  </button>
                 </div>
+                <code className="block text-[11px] font-mono text-muted p-2 rounded-xl bg-surface-raised/60 break-all select-all">
+                  {launchCommand}
+                </code>
+              </div>
 
-                <div className="space-y-1">
-                  <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                    Or Paste Raw Career History
+              {/* CDP Port Input & Live Probe Test */}
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                <div className="sm:col-span-8 space-y-1">
+                  <label className="text-xs font-semibold text-primary block">
+                    Remote Debugging URL / Port
                   </label>
-                  <textarea
-                    rows={4}
-                    value={resumeText}
-                    onChange={(e) => setResumeText(e.target.value)}
-                    className="w-full p-3 rounded-2xl glass-input text-xs font-sans outline-none leading-relaxed resize-none"
-                  />
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-muted">
+                      http://{cdpHost}:
+                    </span>
+                    <input
+                      type="number"
+                      value={cdpPort}
+                      onChange={(e) => setCdpPort(Number(e.target.value))}
+                      className="w-24 px-3 py-1.5 rounded-xl bg-surface-raised border border-border-subtle text-xs font-mono outline-none focus:border-accent"
+                    />
+                  </div>
+                </div>
+
+                <div className="sm:col-span-4">
+                  <button
+                    type="button"
+                    onClick={handleProbeCdp}
+                    disabled={isProbing}
+                    className="w-full py-2 px-3 rounded-xl bg-surface-raised border border-accent/40 text-xs font-bold text-accent hover:bg-accent/15 transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Radio
+                      className={`w-3.5 h-3.5 ${
+                        isProbing ? "animate-spin" : ""
+                      }`}
+                    />
+                    <span>{isProbing ? "Probing..." : "Test CDP Port"}</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Cover Letter Tone Selector */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                  Target Cover Letter Style
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    {
-                      id: "technical_direct",
-                      label: "Technical & Direct",
-                      desc: "Metrics, architecture, SLAs",
-                    },
-                    {
-                      id: "narrative_craft",
-                      label: "Narrative Craft",
-                      desc: "Product vision, leadership",
-                    },
-                    {
-                      id: "executive_impact",
-                      label: "Executive Impact",
-                      desc: "ROI, scale, team leverage",
-                    },
-                  ].map((t) => {
-                    const isSelected = coverLetterStyle === t.id;
-                    return (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => {
-                          soundEngine.playSelect();
-                          setCoverLetterStyle(t.id);
-                        }}
-                        className={`p-2.5 rounded-xl border text-left transition-all ${
-                          isSelected
-                            ? "bg-accent/15 border-accent text-primary shadow-sm"
-                            : "bg-surface-raised border-border-subtle text-muted"
-                        }`}
-                      >
-                        <div className="text-xs font-bold truncate text-primary">
-                          {t.label}
-                        </div>
-                        <div className="text-[9px] text-muted font-mono mt-0.5">
-                          {t.desc}
-                        </div>
-                      </button>
-                    );
-                  })}
+              {/* CDP Probe Result Banner */}
+              {cdpProbed && (
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-mono flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>
+                      CDP Active on port {cdpPort}: Ready for autonomous sync
+                    </span>
+                  </span>
+                  <span className="text-[10px] text-muted hidden sm:inline">
+                    14ms latency
+                  </span>
                 </div>
-              </div>
-            </motion.div>
-          )}
+              )}
 
-          {/* Step 4: Autonomous Portal Agent & Session Connector */}
-          {step === 4 && (
-            <motion.div
-              key="step-4"
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -10 }}
-              className="space-y-4"
-            >
-              <div className="space-y-1">
-                <h4 className="font-display text-base font-bold text-primary flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-accent" />
-                  Special Feature: Autonomous Portal Dispatcher
-                </h4>
-                <p className="text-xs text-muted font-sans leading-relaxed">
-                  Provide your authenticated portal session token. Rolevia will
-                  autonomously discover matching postings, generate grounded
-                  cover letters, and submit applications on your behalf daily.
-                </p>
-              </div>
-
-              {/* Supported Portals Selector */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                  Enabled Job Portals (Multi-Select)
+              {/* Connected Portal Toggles */}
+              <div className="space-y-2 pt-1">
+                <label className="text-xs font-semibold text-primary block">
+                  Active Portals to Sync &amp; Apply
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
-                    { id: "greenhouse", name: "Greenhouse", icon: "🌱" },
-                    { id: "lever", name: "Lever", icon: "⚡" },
-                    { id: "ashby", name: "Ashby", icon: "🔷" },
-                    { id: "linkedin", name: "LinkedIn Jobs", icon: "💼" },
+                    { id: "linkedin" as const, label: "LinkedIn" },
+                    { id: "naukri" as const, label: "Naukri.com" },
+                    { id: "cutshort" as const, label: "Cutshort" },
+                    { id: "wellfound" as const, label: "Wellfound" },
+                    { id: "greenhouse" as const, label: "Greenhouse" },
+                    { id: "lever" as const, label: "Lever ATS" },
+                    { id: "ashby" as const, label: "Ashby HQ" },
                   ].map((p) => {
-                    const isChecked = selectedPortals.includes(p.id);
+                    const isChecked = portals[p.id];
                     return (
-                      <button
+                      <label
                         key={p.id}
-                        type="button"
-                        onClick={() => togglePortal(p.id)}
-                        className={`p-2.5 rounded-xl border text-left transition-all flex items-center justify-between ${
+                        className={`p-2.5 rounded-xl border text-xs font-medium flex items-center justify-between cursor-pointer transition-all ${
                           isChecked
-                            ? "bg-accent/15 border-accent text-primary font-bold shadow-sm"
-                            : "bg-surface-raised border-border-subtle text-muted"
+                            ? "bg-accent/10 border-accent/40 text-primary"
+                            : "bg-surface-raised/40 border-border-subtle text-muted"
                         }`}
                       >
-                        <div className="flex items-center gap-2 text-xs truncate">
-                          <span>{p.icon}</span>
-                          <span className="truncate">{p.name}</span>
-                        </div>
-                        {isChecked && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
-                        )}
-                      </button>
+                        <span>{p.label}</span>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            setPortals((prev) => ({
+                              ...prev,
+                              [p.id]: e.target.checked,
+                            }));
+                            soundEngine.playToggle();
+                          }}
+                          className="w-3.5 h-3.5 accent-amber-600 rounded"
+                        />
+                      </label>
                     );
                   })}
                 </div>
               </div>
+            </motion.div>
+          )}
 
-              {/* Portal Session Key Input */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-mono text-muted uppercase tracking-wider">
-                    Portal Session Key / ATS Bridge Token
-                  </label>
-                  <span className="text-[10px] font-mono text-accent">
-                    AES-256 GCM Encrypted
-                  </span>
-                </div>
-                <div className="relative">
-                  <Lock className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="password"
-                    value={portalSessionKey}
-                    onChange={(e) => setPortalSessionKey(e.target.value)}
-                    placeholder="session_token_gh_ats_..."
-                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl glass-input text-xs font-mono outline-none"
-                  />
-                </div>
-                <p className="text-[10px] text-muted font-sans leading-relaxed">
-                  Log in to your Greenhouse, Lever, or LinkedIn account in your
-                  browser and provide the session token. Rolevia uses this
-                  exclusively for certified dispatches under your explicit
-                  policy.
+          {/* STEP 4: Resume & Daily Quota */}
+          {step === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="space-y-4"
+            >
+              <div>
+                <h4 className="font-display text-base font-bold text-primary">
+                  Master Resume &amp; Dispatch Quota
+                </h4>
+                <p className="text-xs text-muted mt-0.5">
+                  Confirm your career facts and daily application boundaries.
                 </p>
               </div>
 
-              {/* Daily Application Cap Slider */}
-              <div className="p-3.5 rounded-2xl bg-surface-raised/70 border border-border-subtle space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-primary">
-                    Daily Application Cap
-                  </span>
-                  <span className="font-mono text-accent font-bold">
-                    {dailyApplicationCap} Applications / Day
+              {/* Dropzone */}
+              <div
+                onClick={() => {
+                  soundEngine.playClick();
+                  setUploadedFileName(
+                    uploadedFileName ? null : "Akshaykumar_Patil_Resume.pdf",
+                  );
+                }}
+                className="p-5 rounded-2xl border-2 border-dashed border-accent/40 bg-surface-raised/40 text-center space-y-2 hover:border-accent transition-colors cursor-pointer"
+              >
+                <Upload className="w-6 h-6 mx-auto text-accent" />
+                <div className="text-xs font-bold text-primary">
+                  {uploadedFileName
+                    ? `Attached: ${uploadedFileName}`
+                    : "Click to Attach Master Resume (PDF, DOCX)"}
+                </div>
+                <p className="text-[10px] text-muted font-mono">
+                  SHA-256 local fingerprint &bull; Zero fabrication guaranteed
+                </p>
+              </div>
+
+              {/* Daily Quota Slider */}
+              <div className="p-4 rounded-2xl bg-surface-raised border border-border-subtle space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-primary">
+                  <span>Daily Application Quota</span>
+                  <span className="font-mono text-accent font-bold text-sm">
+                    {dailyQuota} applications / day
                   </span>
                 </div>
                 <input
                   type="range"
-                  min={1}
-                  max={20}
-                  value={dailyApplicationCap}
-                  onChange={(e) =>
-                    setDailyApplicationCap(Number(e.target.value))
-                  }
-                  className="w-full accent-accent cursor-pointer"
+                  min="1"
+                  max="20"
+                  value={dailyQuota}
+                  onChange={(e) => {
+                    setDailyQuota(Number(e.target.value));
+                    soundEngine.playClick();
+                  }}
+                  className="w-full accent-amber-600 cursor-pointer h-2"
                 />
                 <div className="flex justify-between text-[10px] font-mono text-muted">
-                  <span>1 (Conservative)</span>
+                  <span>1 (Targeted)</span>
                   <span>5 (Recommended)</span>
-                  <span>20 (Aggressive)</span>
+                  <span>20 (High Volume)</span>
+                </div>
+              </div>
+
+              {/* Cover Letter Style */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-primary block">
+                  Cover Letter Narrative Tone
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { id: "technical_direct", label: "Technical & Direct" },
+                    { id: "narrative_craft", label: "Product & Impact" },
+                    { id: "executive_impact", label: "Scale & Leadership" },
+                  ].map((style) => (
+                    <button
+                      key={style.id}
+                      type="button"
+                      onClick={() => {
+                        setCoverLetterStyle(style.id);
+                        soundEngine.playSelect();
+                      }}
+                      className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
+                        coverLetterStyle === style.id
+                          ? "bg-accent/15 border-accent text-primary"
+                          : "bg-surface-raised border-border-subtle text-muted"
+                      }`}
+                    >
+                      {style.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             </motion.div>
           )}
+        </div>
 
-          {/* Navigation Action Buttons */}
-          <div className="flex items-center justify-between pt-3 border-t border-border-subtle">
-            {step > 1 ? (
-              <button
-                type="button"
-                onClick={handlePrevStep}
-                className="btn-ghost px-4 py-2 rounded-full text-xs font-bold text-muted hover:text-primary flex items-center gap-1.5 active:scale-95 transition-transform"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back</span>
-              </button>
-            ) : (
-              <div />
-            )}
-
+        {/* Modal Footer Controls */}
+        <div className="p-4 sm:p-5 border-t border-border-subtle flex items-center justify-between bg-surface-raised/40">
+          {step > 1 ? (
             <button
               type="button"
-              onClick={handleNextStep}
-              className="btn-primary px-5 py-2.5 rounded-full text-xs font-bold flex items-center gap-2 shadow-md active:scale-95 transition-transform"
+              onClick={() => {
+                soundEngine.playClick();
+                setStep(step - 1);
+              }}
+              className="px-4 py-2 rounded-xl glass-pill text-xs font-semibold text-muted hover:text-primary flex items-center gap-1.5 transition-colors"
             >
-              <span>
-                {step === totalSteps
-                  ? "Complete Setup & Launch Autopilot"
-                  : "Continue"}
-              </span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
             </button>
-          </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+          ) : (
+            <div />
+          )}
+
+          {step < totalSteps ? (
+            <button
+              type="button"
+              onClick={() => {
+                soundEngine.playClick();
+                setStep(step + 1);
+              }}
+              className="px-5 py-2.5 rounded-xl bg-accent text-white text-xs font-bold shadow-md hover:brightness-110 flex items-center gap-1.5 transition-all"
+            >
+              <span>Continue</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleFinish}
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent to-amber-600 text-white text-xs font-bold shadow-lg hover:brightness-110 flex items-center gap-2 transition-all active:scale-95"
+            >
+              <Zap className="w-4 h-4" />
+              <span>Arm Autopilot &amp; Save Session</span>
+            </button>
+          )}
+        </div>
+      </motion.div>
+    </div>
   );
 }
