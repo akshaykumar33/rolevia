@@ -15,11 +15,15 @@ import { motion } from "framer-motion";
 
 interface HeroSectionProps {
   onNavigateTab?: (
-    tab: "cockpit" | "state_machine" | "architecture" | "tokens",
+    tab: "cockpit" | "autopilot" | "state_machine" | "architecture" | "tokens",
   ) => void;
+  onOpenOnboarding?: () => void;
 }
 
-export function HeroSection({ onNavigateTab }: HeroSectionProps) {
+export function HeroSection({
+  onNavigateTab,
+  onOpenOnboarding,
+}: HeroSectionProps) {
   const [copiedToken, setCopiedToken] = useState(false);
 
   const handleCopySessionToken = () => {
@@ -101,12 +105,37 @@ export function HeroSection({ onNavigateTab }: HeroSectionProps) {
               type="button"
               onClick={() => {
                 soundEngine.playClick();
+                if (onNavigateTab) onNavigateTab("autopilot");
+              }}
+              className="px-4 py-2.5 rounded-full text-xs font-bold bg-surface-raised border border-border-strong text-primary hover:border-accent hover:text-accent flex items-center gap-2 active:scale-95 transition-all"
+            >
+              <Zap className="w-4 h-4 text-emerald-400" />
+              <span>Autopilot Agent</span>
+            </button>
+
+            {onOpenOnboarding && (
+              <button
+                type="button"
+                onClick={() => {
+                  soundEngine.playClick();
+                  onOpenOnboarding();
+                }}
+                className="btn-ghost px-3.5 py-2.5 rounded-full text-xs font-bold text-muted hover:text-primary flex items-center gap-2 active:scale-95"
+              >
+                <span>Setup Guide</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                soundEngine.playClick();
                 if (onNavigateTab) onNavigateTab("architecture");
               }}
-              className="btn-ghost px-4 py-2.5 rounded-full text-xs font-bold text-muted hover:text-primary flex items-center gap-2 active:scale-95"
+              className="btn-ghost px-3.5 py-2.5 rounded-full text-xs font-bold text-muted hover:text-primary flex items-center gap-2 active:scale-95"
             >
               <Network className="w-4 h-4 text-accent" />
-              <span>Inspect Architecture</span>
+              <span>Architecture</span>
             </button>
 
             <button

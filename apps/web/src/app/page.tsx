@@ -5,6 +5,11 @@ import { Header } from "../components/Header";
 import { TelemetryHUD } from "../components/TelemetryHUD";
 import { HeroSection } from "../components/HeroSection";
 import { InteractiveCareerCockpit } from "../components/InteractiveCareerCockpit";
+import { AutonomousPortalAgent } from "../components/AutonomousPortalAgent";
+import {
+  OnboardingSetupWizard,
+  OnboardingData,
+} from "../components/OnboardingSetupWizard";
 import { StateMachineInspector } from "../components/StateMachineInspector";
 import { ArchitectureGraphViewer } from "../components/ArchitectureGraphViewer";
 import { CommandPalette } from "../components/CommandPalette";
@@ -16,11 +21,28 @@ import { BRAND_CONFIG } from "@rolevia/config";
 
 export default function HomePage() {
   const [activeMainTab, setActiveMainTab] = useState<
-    "cockpit" | "state_machine" | "architecture" | "tokens"
+    "cockpit" | "autopilot" | "state_machine" | "architecture" | "tokens"
   >("cockpit");
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
 
-  // Global keyboard shortcut listener for Cmd+K and Tab numbers 1-4
+  // Dynamic Candidate Profile configured via Onboarding Wizard
+  const [userProfile, setUserProfile] = useState<OnboardingData>({
+    provider: "anthropic",
+    apiKey: "",
+    fullName: "Alex Rivera",
+    email: "alex.rivera@engineercore.io",
+    targetDomain: "Distributed Systems & High-Throughput Microservices",
+    seniority: "Staff",
+    salaryFloor: 210000,
+    coverLetterStyle: "technical_direct",
+    resumeText:
+      "Staff Platform Engineer with 9+ years architecting event-driven microservices processing 120,000 req/min. Deep PostgreSQL performance tuning, RLS tenant isolation, and pgvector semantic retrieval pipelines.",
+    portalSessionKey: "session_token_gh_ats_9941a0b3f81e",
+    dailyApplicationCap: 5,
+  });
+
+  // Global keyboard shortcut listener for Cmd+K and Tab numbers 1-5
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -28,9 +50,10 @@ export default function HomePage() {
         setCommandPaletteOpen((prev) => !prev);
       } else if (!commandPaletteOpen && e.altKey) {
         if (e.key === "1") setActiveMainTab("cockpit");
-        if (e.key === "2") setActiveMainTab("state_machine");
-        if (e.key === "3") setActiveMainTab("architecture");
-        if (e.key === "4") setActiveMainTab("tokens");
+        if (e.key === "2") setActiveMainTab("autopilot");
+        if (e.key === "3") setActiveMainTab("state_machine");
+        if (e.key === "4") setActiveMainTab("architecture");
+        if (e.key === "5") setActiveMainTab("tokens");
       }
     }
 
@@ -47,6 +70,16 @@ export default function HomePage() {
       {/* Ambient Neural Constellation Canvas */}
       <ConstellationCanvas />
 
+      {/* Interactive Onboarding Setup Wizard */}
+      <OnboardingSetupWizard
+        isOpen={onboardingOpen}
+        onClose={() => setOnboardingOpen(false)}
+        onComplete={(data) => {
+          setUserProfile(data);
+          setOnboardingOpen(false);
+        }}
+      />
+
       {/* Global Command Palette */}
       <CommandPalette
         isOpen={commandPaletteOpen}
@@ -56,11 +89,13 @@ export default function HomePage() {
           setActiveMainTab(tab);
         }}
         onToggleTheme={toggleTheme}
+        onOpenOnboarding={() => setOnboardingOpen(true)}
       />
 
       {/* Floating Glass Header */}
       <Header
         onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+        onOpenOnboarding={() => setOnboardingOpen(true)}
         activeTab={activeMainTab}
         onTabChange={(tab) => {
           soundEngine.playClick();
@@ -79,6 +114,7 @@ export default function HomePage() {
             soundEngine.playClick();
             setActiveMainTab(tab);
           }}
+          onOpenOnboarding={() => setOnboardingOpen(true)}
         />
 
         {/* Interactive Segmented Control Navigation */}
@@ -96,22 +132,28 @@ export default function HomePage() {
                   shortcut: "Alt+1",
                 },
                 {
+                  id: "autopilot" as const,
+                  label: "Autopilot Agent",
+                  badge: "5 Portals",
+                  shortcut: "Alt+2",
+                },
+                {
                   id: "state_machine" as const,
                   label: "UX State Machine",
                   badge: "10 States",
-                  shortcut: "Alt+2",
+                  shortcut: "Alt+3",
                 },
                 {
                   id: "architecture" as const,
                   label: "Context Topology",
                   badge: "17 DDD",
-                  shortcut: "Alt+3",
+                  shortcut: "Alt+4",
                 },
                 {
                   id: "tokens" as const,
                   label: "Design Tokens",
                   badge: "WCAG AA",
-                  shortcut: "Alt+4",
+                  shortcut: "Alt+5",
                 },
               ].map((tab) => {
                 const isActive = activeMainTab === tab.id;
@@ -177,7 +219,15 @@ export default function HomePage() {
               {/* Tab 1: Interactive Career Studio Simulator */}
               {activeMainTab === "cockpit" && <InteractiveCareerCockpit />}
 
-              {/* Tab 2: UX State Machine Inspector */}
+              {/* Tab 2: Autonomous Job Portal Dispatch Engine */}
+              {activeMainTab === "autopilot" && (
+                <AutonomousPortalAgent
+                  onOpenOnboarding={() => setOnboardingOpen(true)}
+                  targetDomain={userProfile.targetDomain}
+                />
+              )}
+
+              {/* Tab 3: UX State Machine Inspector */}
               {activeMainTab === "state_machine" && <StateMachineInspector />}
 
               {/* Tab 3: Bounded Context Architecture Viewer */}
@@ -300,6 +350,12 @@ export default function HomePage() {
               onClick={() => setActiveMainTab("cockpit")}
             >
               Career Studio
+            </span>
+            <span
+              className="hover:text-primary transition-colors cursor-pointer"
+              onClick={() => setActiveMainTab("autopilot")}
+            >
+              Autopilot Agent
             </span>
             <span
               className="hover:text-primary transition-colors cursor-pointer"

@@ -1,10 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import "../../../../packages/ui/src/theme.css";
-
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Nunito:wght@400;600;700;800&display=swap");
 
 /* ============================================================
    ROLEVIA — Truthful AI Career OS (Handcrafted & Tactile)
@@ -14,6 +12,44 @@
 
 :root {
   color-scheme: light dark;
+
+  /* Warm Parchment (Light) - Tactile & Editorial */
+  --bg-base: #f8f5ee;
+  --bg-surface: #ffffff;
+  --bg-surface-raised: #f1ede4;
+  --bg-surface-overlay: rgba(255, 255, 255, 0.96);
+  --text-primary: #251b14;
+  --text-muted: #665649;
+  --border-subtle: rgba(102, 86, 73, 0.14);
+  --border-strong: rgba(102, 86, 73, 0.24);
+  --accent-primary: #c8651b;
+  --accent-secondary: #8c5b36;
+  --status-success: #287244;
+  --status-warning: #b46b08;
+  --status-danger: #c23b2b;
+  --ring-focus: rgba(200, 101, 27, 0.35);
+
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-ui: "Inter", "Nunito", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+.dark {
+  /* Deep Cocoa & Molten Caramel (Dark) - Handcrafted & Focused */
+  --bg-base: #130f0b;
+  --bg-surface: #1c1712;
+  --bg-surface-raised: #261f18;
+  --bg-surface-overlay: rgba(28, 23, 18, 0.96);
+  --text-primary: #f6efe7;
+  --text-muted: #a79585;
+  --border-subtle: rgba(246, 239, 231, 0.09);
+  --border-strong: rgba(246, 239, 231, 0.18);
+  --accent-primary: #f28d3f;
+  --accent-secondary: #cb7e53;
+  --status-success: #34d399;
+  --status-warning: #fbbf24;
+  --status-danger: #f87171;
+  --ring-focus: rgba(242, 141, 63, 0.4);
 }
 
 html {

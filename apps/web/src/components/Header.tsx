@@ -9,6 +9,7 @@ import {
   Moon,
   Volume2,
   VolumeX,
+  Sparkles,
 } from "lucide-react";
 import { RoleviaLogo } from "./RoleviaLogo";
 import { CustomSelect, SelectOption } from "./CustomSelect";
@@ -16,14 +17,17 @@ import { soundEngine } from "../lib/soundEffects";
 
 interface HeaderProps {
   onOpenCommandPalette?: () => void;
-  activeTab?: "cockpit" | "state_machine" | "architecture" | "tokens";
+  onOpenOnboarding?: () => void;
+  activeTab?:
+    "cockpit" | "autopilot" | "state_machine" | "architecture" | "tokens";
   onTabChange?: (
-    tab: "cockpit" | "state_machine" | "architecture" | "tokens",
+    tab: "cockpit" | "autopilot" | "state_machine" | "architecture" | "tokens",
   ) => void;
 }
 
 export function Header({
   onOpenCommandPalette,
+  onOpenOnboarding,
   activeTab: _activeTab = "cockpit",
   onTabChange,
 }: HeaderProps) {
@@ -122,7 +126,13 @@ export function Header({
             title="Candidate Fact Grounding: 100%"
           >
             <div className="relative w-6 h-6 flex items-center justify-center">
-              <svg className="w-6 h-6" viewBox="0 0 36 36">
+              <svg
+                className="w-6 h-6"
+                viewBox="0 0 36 36"
+                width={24}
+                height={24}
+                fill="none"
+              >
                 <circle
                   className="progress-ring-track"
                   cx="18"
@@ -155,6 +165,22 @@ export function Header({
               Truth Score
             </span>
           </div>
+
+          {/* Setup Guide Button */}
+          {onOpenOnboarding && (
+            <button
+              type="button"
+              onClick={() => {
+                soundEngine.playClick();
+                onOpenOnboarding();
+              }}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-pill text-xs font-semibold text-primary hover:border-accent hover:text-accent transition-all active:scale-95"
+              title="Launch Onboarding & Setup Wizard"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <span>Setup Guide</span>
+            </button>
+          )}
 
           {/* Sound Synthesizer Toggle */}
           <button

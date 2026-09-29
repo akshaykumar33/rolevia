@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Cpu,
   SunMoon,
+  Zap,
 } from "lucide-react";
 
 interface CommandItem {
@@ -26,10 +27,11 @@ interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigate: (
-    tab: "cockpit" | "state_machine" | "architecture" | "tokens",
+    tab: "cockpit" | "autopilot" | "state_machine" | "architecture" | "tokens",
   ) => void;
   onToggleTheme: () => void;
   onTriggerGenerate?: () => void;
+  onOpenOnboarding?: () => void;
 }
 
 export function CommandPalette({
@@ -38,6 +40,7 @@ export function CommandPalette({
   onNavigate,
   onToggleTheme,
   onTriggerGenerate,
+  onOpenOnboarding,
 }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -52,6 +55,19 @@ export function CommandPalette({
       icon: <Compass className="w-4 h-4 text-accent" />,
       action: () => {
         onNavigate("cockpit");
+        onClose();
+      },
+    },
+    {
+      id: "nav-autopilot",
+      category: "Navigation",
+      label: "Autonomous Portal Agent",
+      description:
+        "Session key ATS connectors, daily caps & automated dispatch",
+      shortcut: "⌘2",
+      icon: <Zap className="w-4 h-4 text-emerald-400" />,
+      action: () => {
+        onNavigate("autopilot");
         onClose();
       },
     },
@@ -103,6 +119,19 @@ export function CommandPalette({
       action: () => {
         onNavigate("cockpit");
         if (onTriggerGenerate) onTriggerGenerate();
+        onClose();
+      },
+    },
+    {
+      id: "act-onboarding",
+      category: "Action",
+      label: "Launch Setup & Onboarding Wizard",
+      description:
+        "Configure provider keys, career domains, seniority & portal credentials",
+      shortcut: "⌘O",
+      icon: <Sparkles className="w-4 h-4 text-amber-500" />,
+      action: () => {
+        if (onOpenOnboarding) onOpenOnboarding();
         onClose();
       },
     },
