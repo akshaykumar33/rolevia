@@ -47,6 +47,8 @@ description = "Paths and values that cannot contain live credentials"
 commits = [
   # Repository bootstrap commit containing local development database connection placeholder.
   "2465ced382ba893ca0d24bb2772bb5834636d9fe",
+  # Intermediate UI commit with mock ATS session placeholders sanitized in subsequent commit.
+  "4ed105d280ca96dc7c02f6655cccc12fb1bcccc4",
 ]
 
 stopwords = [
