@@ -99,30 +99,45 @@ export function Header({
         </div>
 
         {/* Center: Search / Command Palette Bar */}
-        <div className="flex-1 max-w-sm hidden lg:block">
+        <div className="flex-1 max-w-xs xl:max-w-sm hidden md:block min-w-0 mx-2">
           <button
             type="button"
             onClick={() => {
               soundEngine.playClick();
               if (onOpenCommandPalette) onOpenCommandPalette();
             }}
-            className="w-full h-9 px-3.5 rounded-full glass-pill flex items-center justify-between text-xs text-muted hover:text-primary hover:border-accent hover:shadow-sm transition-all group"
+            className="w-full h-9 px-3.5 rounded-full glass-pill flex items-center justify-between text-xs text-muted hover:text-primary hover:border-accent hover:shadow-sm transition-all group overflow-hidden whitespace-nowrap gap-2"
           >
-            <div className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-muted group-hover:text-accent transition-colors" />
-              <span>Search actions, contracts, facts...</span>
+            <div className="flex items-center gap-2 min-w-0 overflow-hidden">
+              <Search className="w-3.5 h-3.5 text-muted group-hover:text-accent transition-colors shrink-0" />
+              <span className="truncate whitespace-nowrap text-xs">
+                Search actions, contracts...
+              </span>
             </div>
-            <kbd className="px-2 py-0.5 rounded text-[10px] font-mono bg-surface-raised border border-border-strong text-muted group-hover:text-primary">
+            <kbd className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-raised border border-border-strong text-muted group-hover:text-primary shrink-0 select-none">
               ⌘K
             </kbd>
           </button>
         </div>
 
-        {/* Right: Progress Ring + Streak Badge + Sound + Theme + User */}
+        {/* Right: Mobile Search + Progress Ring + Streak Badge + Sound + Theme + User */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Mobile Search Icon Button */}
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              if (onOpenCommandPalette) onOpenCommandPalette();
+            }}
+            className="md:hidden p-2 rounded-full glass-pill text-muted hover:text-primary hover:border-accent transition-all shrink-0"
+            aria-label="Search and command palette"
+          >
+            <Search className="w-4 h-4" />
+          </button>
+
           {/* Circular Progress Ring */}
           <div
-            className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full glass-pill"
+            className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full glass-pill shrink-0"
             title="Candidate Fact Grounding: 100%"
           >
             <div className="relative w-6 h-6 flex items-center justify-center">
@@ -152,16 +167,16 @@ export function Header({
                 5/5
               </span>
             </div>
-            <span className="text-[11px] font-mono text-muted hidden xl:inline">
+            <span className="text-[11px] font-mono text-muted hidden xl:inline whitespace-nowrap">
               Facts Grounded
             </span>
           </div>
 
           {/* Streak Flame Badge */}
-          <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-bold">
-            <Flame className="w-3.5 h-3.5 text-amber-500" />
+          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-bold shrink-0">
+            <Flame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
             <span className="font-mono">100%</span>
-            <span className="text-[10px] font-normal text-muted hidden lg:inline">
+            <span className="text-[10px] font-normal text-muted hidden xl:inline whitespace-nowrap">
               Truth Score
             </span>
           </div>
@@ -174,10 +189,10 @@ export function Header({
                 soundEngine.playClick();
                 onOpenOnboarding();
               }}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-pill text-xs font-semibold text-primary hover:border-accent hover:text-accent transition-all active:scale-95"
+              className="hidden xl:flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-pill text-xs font-semibold text-primary hover:border-accent hover:text-accent transition-all active:scale-95 shrink-0 whitespace-nowrap"
               title="Launch Onboarding & Setup Wizard"
             >
-              <Sparkles className="w-3.5 h-3.5 text-accent" />
+              <Sparkles className="w-3.5 h-3.5 text-accent shrink-0" />
               <span>Setup Guide</span>
             </button>
           )}
