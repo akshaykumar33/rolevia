@@ -85,7 +85,7 @@ export default function ActivityPage() {
               }`}
             >
               {f.label}
-              <span className="font-mono text-xs opacity-70">{count}</span>
+              <span className="text-xs tabular-nums opacity-70">{count}</span>
             </button>
           );
         })}
@@ -131,7 +131,7 @@ export default function ActivityPage() {
                       {a.reason && `. ${a.reason}`}
                     </p>
                   </div>
-                  <span className="font-mono text-xs text-fg-2">
+                  <span className="text-xs tabular-nums text-fg-2">
                     {a.match}% fit
                   </span>
                   {a.status === "needs-review" ? (

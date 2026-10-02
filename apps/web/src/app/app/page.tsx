@@ -1,8 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Check, Inbox } from "lucide-react";
-import { Badge, EmptyState, PageHeader } from "../../ui/primitives";
+import {
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  Clock,
+  Hand,
+  Inbox,
+  SkipForward,
+  type LucideIcon,
+} from "lucide-react";
+import { Badge, EmptyState } from "../../ui/primitives";
 import { useWorkspace } from "../../features/workspace/store";
 import { PORTALS, setupSteps } from "../../features/workspace/model";
 import { scheduleLabel } from "../../features/workspace/format";
@@ -12,6 +21,7 @@ export default function OverviewPage() {
   const steps = setupSteps(w);
   const doneCount = steps.filter((s) => s.done).length;
   const ready = doneCount === steps.length;
+  const next = steps.find((s) => !s.done);
   const firstName = w.profile.fullName.split(" ")[0];
 
   const counts = {
@@ -21,85 +31,106 @@ export default function OverviewPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title={firstName ? `Welcome back, ${firstName}` : "Welcome to Rolevia"}
-        description={
-          ready
-            ? "Here is where your job search stands."
-            : "Finish these steps and your first campaign is ready to run."
-        }
-      />
+    <div className="space-y-6">
+      <section className="relative isolate overflow-hidden rounded-[20px] border border-line bg-surface p-6 sm:p-8">
+        <div
+          aria-hidden
+          className="bg-grid absolute inset-0 -z-10 opacity-60"
+        />
+        <div
+          aria-hidden
+          className="absolute -right-32 -top-40 -z-10 size-[420px] rounded-full bg-[radial-gradient(closest-side,var(--accent-soft),transparent)]"
+        />
+        <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
+              {firstName
+                ? `Good to see you, ${firstName}`
+                : "Welcome to Rolevia"}
+            </h1>
+            <p className="mt-2 max-w-[46ch] text-fg-2">
+              {ready
+                ? w.campaign.paused
+                  ? "Your campaign is paused. Resume it when you are ready."
+                  : `Your campaign runs ${scheduleLabel(w.campaign).toLowerCase()}.`
+                : `${steps.length - doneCount} quick ${
+                    steps.length - doneCount === 1 ? "step" : "steps"
+                  } left before your first campaign can run.`}
+            </p>
+            {next && (
+              <Link href={next.href} className="btn-primary group mt-6">
+                {next.label}
+                <ArrowRight
+                  size={16}
+                  aria-hidden
+                  className="transition-transform group-hover:translate-x-0.5"
+                />
+              </Link>
+            )}
+            {ready && (
+              <Link href="/app/campaign" className="btn-secondary mt-6">
+                Edit campaign
+              </Link>
+            )}
+          </div>
+          <ProgressRing value={doneCount} total={steps.length} />
+        </div>
 
-      {!ready && (
-        <section className="card" aria-labelledby="setup-title">
-          <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4 sm:px-6">
-            <h2 id="setup-title" className="text-base font-semibold">
-              Get set up
-            </h2>
-            <span className="text-sm text-fg-2">
-              {doneCount} of {steps.length} done
-            </span>
-          </div>
-          <div
-            className="h-1 bg-surface-2"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={steps.length}
-            aria-valuenow={doneCount}
-            aria-label="Setup progress"
-          >
-            <div
-              className="h-full bg-accent transition-[width] duration-300"
-              style={{ width: `${(doneCount / steps.length) * 100}%` }}
-            />
-          </div>
-          <ol className="divide-y divide-line">
-            {steps.map((s) => (
+        {!ready && (
+          <ol className="mt-8 grid gap-2 sm:grid-cols-5">
+            {steps.map((s, i) => (
               <li key={s.id}>
                 <Link
                   href={s.href}
-                  className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-surface-2/60 sm:px-6"
+                  className={`flex h-full flex-col gap-3 rounded-card border p-3.5 text-sm transition-colors ${
+                    s.done
+                      ? "border-transparent bg-accent-soft/60 text-fg-2"
+                      : s.id === next?.id
+                        ? "border-accent/50 bg-surface shadow-sm"
+                        : "border-line bg-surface/70 text-fg-2 hover:border-line-strong"
+                  }`}
                 >
                   <span
-                    className={`grid size-6 shrink-0 place-items-center rounded-full border ${
+                    className={`grid size-6 place-items-center rounded-full text-xs font-semibold ${
                       s.done
-                        ? "border-accent bg-accent text-accent-fg"
-                        : "border-line-strong"
+                        ? "bg-accent text-accent-fg"
+                        : "border border-line-strong text-fg-2"
                     }`}
                   >
-                    {s.done && <Check size={14} aria-hidden />}
+                    {s.done ? <Check size={13} aria-hidden /> : i + 1}
                   </span>
                   <span
-                    className={`flex-1 text-sm ${
-                      s.done ? "text-fg-3 line-through" : "font-medium"
-                    }`}
+                    className={s.id === next?.id ? "font-medium text-fg" : ""}
                   >
                     {s.label}
                     {s.done && <span className="sr-only"> (done)</span>}
                   </span>
-                  {!s.done && (
-                    <ArrowRight
-                      size={16}
-                      aria-hidden
-                      className="text-fg-3 transition-transform group-hover:translate-x-0.5"
-                    />
-                  )}
                 </Link>
               </li>
             ))}
           </ol>
-        </section>
-      )}
+        )}
+      </section>
 
       <section aria-label="Summary" className="grid gap-4 sm:grid-cols-3">
-        <Stat label="Applied" value={counts.applied} />
         <Stat
-          label="Waiting for your review"
-          value={counts.review}
-          highlight={counts.review > 0}
+          icon={CheckCircle2}
+          tone="text-success bg-success-soft"
+          label="Applied"
+          value={counts.applied}
         />
-        <Stat label="Skipped" value={counts.skipped} />
+        <Stat
+          icon={Hand}
+          tone="text-warning bg-warning-soft"
+          label="Waiting for you"
+          value={counts.review}
+        />
+        <Stat
+          icon={SkipForward}
+          tone="text-fg-2 bg-surface-2"
+          label="Skipped"
+          value={counts.skipped}
+        />
       </section>
 
       <section className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
@@ -130,7 +161,7 @@ export default function OverviewPage() {
                     <p className="truncate text-sm font-medium">{a.role}</p>
                     <p className="truncate text-xs text-fg-3">{a.company}</p>
                   </div>
-                  <span className="font-mono text-xs text-fg-2">
+                  <span className="text-xs tabular-nums text-fg-2">
                     {a.match}%
                   </span>
                 </li>
@@ -150,9 +181,15 @@ export default function OverviewPage() {
               <Badge>Not set</Badge>
             )}
           </div>
-          <dl className="mt-5 space-y-3 text-sm">
-            <Row term="Schedule" value={scheduleLabel(w.campaign)} />
+          <div className="mt-5 flex items-center gap-3 rounded-control bg-surface-2 px-4 py-3">
+            <Clock size={16} className="text-accent" aria-hidden />
+            <span className="text-sm font-medium">
+              {scheduleLabel(w.campaign)}
+            </span>
+          </div>
+          <dl className="mt-4 space-y-3 text-sm">
             <Row term="Jobs per run" value={String(w.campaign.jobsPerRun)} />
+            <Row term="Minimum match" value={`${w.campaign.minMatch}%`} />
             <Row
               term="Portals"
               value={
@@ -165,37 +202,78 @@ export default function OverviewPage() {
             />
             <Row
               term="Mode"
-              value={
-                w.campaign.reviewFirst
-                  ? "Review before sending"
-                  : "Full autopilot"
-              }
+              value={w.campaign.reviewFirst ? "Review first" : "Autopilot"}
             />
           </dl>
-          <Link href="/app/campaign" className="btn-secondary mt-6 w-full">
-            Edit campaign
-          </Link>
         </div>
       </section>
     </div>
   );
 }
 
+function ProgressRing({ value, total }: { value: number; total: number }) {
+  const r = 42;
+  const c = 2 * Math.PI * r;
+  const pct = value / total;
+  return (
+    <div
+      className="relative grid size-28 shrink-0 place-items-center"
+      role="img"
+      aria-label={`Setup ${value} of ${total} done`}
+    >
+      <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90">
+        <circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke="var(--border)"
+          strokeWidth="8"
+        />
+        <circle
+          cx="50"
+          cy="50"
+          r={r}
+          fill="none"
+          stroke="var(--accent)"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - pct)}
+          className="transition-[stroke-dashoffset] duration-700 ease-out"
+        />
+      </svg>
+      <div className="text-center">
+        <p className="text-2xl font-semibold tabular-nums">
+          {value}
+          <span className="text-fg-3">/{total}</span>
+        </p>
+        <p className="text-xs text-fg-3">set up</p>
+      </div>
+    </div>
+  );
+}
+
 function Stat({
+  icon: Icon,
+  tone,
   label,
   value,
-  highlight,
 }: {
+  icon: LucideIcon;
+  tone: string;
   label: string;
   value: number;
-  highlight?: boolean;
 }) {
   return (
-    <div className={`card p-5 ${highlight ? "border-warning/40" : ""}`}>
-      <p className="text-sm text-fg-2">{label}</p>
-      <p className="mt-1 font-mono text-2xl font-semibold tabular-nums">
-        {value}
-      </p>
+    <div className="card flex items-center gap-4 p-5">
+      <span className={`grid size-11 place-items-center rounded-xl ${tone}`}>
+        <Icon size={20} aria-hidden />
+      </span>
+      <div>
+        <p className="text-2xl font-semibold tabular-nums">{value}</p>
+        <p className="text-sm text-fg-2">{label}</p>
+      </div>
     </div>
   );
 }

@@ -15,7 +15,7 @@ import {
 import { scheduleLabel } from "../../../features/workspace/format";
 
 const schedules: { id: Schedule; label: string; hint: string }[] = [
-  { id: "manual", label: "Manually", hint: "Runs only when you start it" },
+  { id: "manual", label: "Manually", hint: "When you start it" },
   { id: "daily", label: "Every day", hint: "Including weekends" },
   { id: "weekdays", label: "Weekdays", hint: "Monday to Friday" },
   { id: "weekly", label: "Weekly", hint: "Every Monday" },
