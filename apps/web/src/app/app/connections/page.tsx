@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Check, KeyRound } from "lucide-react";
 import { Badge, Field, PageHeader, Section } from "../../../ui/primitives";
+import { Select } from "../../../ui/controls";
 import {
   updateWorkspace,
   useWorkspace,
@@ -105,18 +106,15 @@ function AiKeySection() {
           className="grid gap-5 sm:grid-cols-[220px_1fr]"
         >
           <Field id="provider" label="Provider">
-            <select
+            <Select
               id="provider"
-              className="input"
               value={provider}
-              onChange={(e) => setProvider(e.target.value as AiProvider)}
-            >
-              {AI_PROVIDERS.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
+              onChange={setProvider}
+              options={AI_PROVIDERS.map((p) => ({
+                value: p.id,
+                label: p.name,
+              }))}
+            />
           </Field>
           <Field
             id="apiKey"

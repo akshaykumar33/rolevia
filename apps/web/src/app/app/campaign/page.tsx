@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Field, PageHeader, Section, Switch } from "../../../ui/primitives";
+import { Slider } from "../../../ui/controls";
 import {
   updateWorkspace,
   useWorkspace,
@@ -117,15 +118,13 @@ export default function CampaignPage() {
                 : "Pick at least one portal above."
             }
           >
-            <input
+            <Slider
               id="jobsPerRun"
-              type="range"
+              ariaLabel="Jobs per run"
               min={1}
               max={50}
               value={draft.jobsPerRun}
-              onChange={(e) => set("jobsPerRun", Number(e.target.value))}
-              className="w-full accent-[var(--accent)]"
-              aria-describedby="jobsPerRun-hint"
+              onChange={(v) => set("jobsPerRun", v)}
             />
           </Field>
           <Field
@@ -133,16 +132,15 @@ export default function CampaignPage() {
             label={`Minimum match: ${draft.minMatch}%`}
             hint="Jobs that fit less than this are skipped and listed in your report."
           >
-            <input
+            <Slider
               id="minMatch"
-              type="range"
+              ariaLabel="Minimum match"
               min={50}
               max={100}
               step={5}
               value={draft.minMatch}
-              onChange={(e) => set("minMatch", Number(e.target.value))}
-              className="w-full accent-[var(--accent)]"
-              aria-describedby="minMatch-hint"
+              onChange={(v) => set("minMatch", v)}
+              format={(v) => `${v}%`}
             />
           </Field>
         </div>

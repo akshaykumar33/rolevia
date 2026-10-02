@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import {
   Activity,
@@ -51,14 +52,27 @@ export function AppShell({ children }: { children: ReactNode }) {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex h-9 items-center gap-3 rounded-control px-3 text-sm font-medium transition-colors ${
+                className={`relative flex h-10 items-center gap-3 rounded-[12px] px-3 text-sm font-medium transition-colors ${
                   active
-                    ? "bg-accent-soft text-accent"
+                    ? "text-fg"
                     : "text-fg-2 hover:bg-surface-2 hover:text-fg"
                 }`}
               >
-                <item.icon size={17} aria-hidden />
-                {item.label}
+                {active && (
+                  <motion.span
+                    layoutId="nav-active"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 rounded-[12px] bg-surface-2 ring-1 ring-inset ring-line"
+                  >
+                    <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-accent" />
+                  </motion.span>
+                )}
+                <item.icon
+                  size={17}
+                  aria-hidden
+                  className={`relative ${active ? "text-accent" : ""}`}
+                />
+                <span className="relative">{item.label}</span>
               </Link>
             );
           })}

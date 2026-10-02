@@ -9,6 +9,7 @@ import {
 } from "react";
 import { FileText, Trash2, Upload } from "lucide-react";
 import { Field, PageHeader, Section } from "../../../ui/primitives";
+import { Select } from "../../../ui/controls";
 import {
   newId,
   updateWorkspace,
@@ -141,37 +142,37 @@ export default function ProfilePage() {
               />
             </Field>
             <Field id="seniority" label="Seniority">
-              <select
+              <Select
                 id="seniority"
-                className="input"
                 value={draft.seniority}
-                onChange={(e) =>
-                  set("seniority", e.target.value as Profile["seniority"])
-                }
-              >
-                <option value="">Any level</option>
-                <option value="junior">Junior</option>
-                <option value="mid">Mid-level</option>
-                <option value="senior">Senior</option>
-                <option value="staff">Staff</option>
-                <option value="principal">Principal</option>
-                <option value="lead">Lead or manager</option>
-              </select>
+                onChange={(v) => set("seniority", v)}
+                options={[
+                  { value: "", label: "Any level" },
+                  { value: "junior", label: "Junior" },
+                  { value: "mid", label: "Mid-level" },
+                  { value: "senior", label: "Senior" },
+                  { value: "staff", label: "Staff" },
+                  { value: "principal", label: "Principal" },
+                  { value: "lead", label: "Lead or manager" },
+                ]}
+              />
             </Field>
             <Field id="workMode" label="Work arrangement">
-              <select
+              <Select
                 id="workMode"
-                className="input"
                 value={draft.workMode}
-                onChange={(e) =>
-                  set("workMode", e.target.value as Profile["workMode"])
-                }
-              >
-                <option value="any">Any</option>
-                <option value="remote">Remote only</option>
-                <option value="hybrid">Hybrid</option>
-                <option value="onsite">On-site</option>
-              </select>
+                onChange={(v) => set("workMode", v)}
+                options={[
+                  {
+                    value: "any",
+                    label: "Any",
+                    hint: "Remote, hybrid or on-site",
+                  },
+                  { value: "remote", label: "Remote only" },
+                  { value: "hybrid", label: "Hybrid" },
+                  { value: "onsite", label: "On-site" },
+                ]}
+              />
             </Field>
             <Field
               id="location"
@@ -325,30 +326,22 @@ function Documents() {
                     {formatBytes(d.sizeBytes)}
                   </p>
                 </div>
-                <label className="sr-only" htmlFor={`kind-${d.id}`}>
-                  Document type for {d.name}
-                </label>
-                <select
-                  id={`kind-${d.id}`}
-                  className="input h-8 w-auto py-0 text-sm"
+                <Select
+                  size="sm"
+                  ariaLabel={`Document type for ${d.name}`}
                   value={d.kind}
-                  onChange={(e) =>
+                  onChange={(kind) =>
                     updateWorkspace((ws) => ({
                       ...ws,
                       documents: ws.documents.map((x) =>
-                        x.id === d.id
-                          ? { ...x, kind: e.target.value as DocumentKind }
-                          : x,
+                        x.id === d.id ? { ...x, kind } : x,
                       ),
                     }))
                   }
-                >
-                  {(Object.keys(kindLabel) as DocumentKind[]).map((k) => (
-                    <option key={k} value={k}>
-                      {kindLabel[k]}
-                    </option>
-                  ))}
-                </select>
+                  options={(Object.keys(kindLabel) as DocumentKind[]).map(
+                    (k) => ({ value: k, label: kindLabel[k] }),
+                  )}
+                />
                 <button
                   type="button"
                   className="btn-ghost size-8 px-0"
