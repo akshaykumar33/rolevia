@@ -10,6 +10,7 @@ import {
 } from "motion/react";
 import { useRef } from "react";
 import { AgentDemo } from "./AgentDemo";
+import { HeroFloaters } from "./HeroFloaters";
 import { EASE_OUT, Magnetic, WordReveal } from "../../ui/motion";
 
 const portals = [
@@ -65,7 +66,7 @@ export function Hero() {
             Bring your own AI key
           </motion.p>
 
-          <h1 className="mt-6 text-[clamp(2.6rem,1.6rem+4.2vw,5rem)] font-bold leading-[1] tracking-[-0.035em]">
+          <h1 className="mt-6 text-[clamp(2.6rem,1.6rem+3.6vw,4.5rem)] font-bold leading-[1] tracking-[-0.035em]">
             <WordReveal text="Applying to jobs is a job." className="block" />
             <WordReveal
               text="Let Rolevia take it."
@@ -122,7 +123,10 @@ export function Hero() {
             transformPerspective: 1200,
           }}
         >
-          <AgentDemo />
+          <div className="relative">
+            <AgentDemo />
+            <HeroFloaters />
+          </div>
         </motion.div>
       </div>
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Field, PageHeader, Section, Switch } from "../../../ui/primitives";
 import { Slider } from "../../../ui/controls";
+import { toast } from "sonner";
 import {
   updateWorkspace,
   useWorkspace,
@@ -43,6 +44,11 @@ export default function CampaignPage() {
   function save() {
     updateWorkspace((ws) => ({ ...ws, campaign: draft }));
     setSaved(true);
+    toast.success("Campaign saved", {
+      description: draft.paused
+        ? "It stays paused until you resume it."
+        : scheduleLabel(draft),
+    });
   }
 
   return (

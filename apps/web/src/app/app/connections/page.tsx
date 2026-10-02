@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Check, KeyRound } from "lucide-react";
 import { Badge, Field, PageHeader, Section } from "../../../ui/primitives";
 import { Select } from "../../../ui/controls";
+import { toast } from "sonner";
 import {
   updateWorkspace,
   useWorkspace,
@@ -63,6 +64,9 @@ function AiKeySection() {
     setKey("");
     setError(null);
     setEditing(false);
+    toast.success("AI key saved", {
+      description: `Ending in ${trimmed.slice(-4)}`,
+    });
   }
 
   const showForm = editing || !aiKey;
@@ -94,7 +98,10 @@ function AiKeySection() {
           <button
             type="button"
             className="btn-danger btn-sm"
-            onClick={() => updateWorkspace((ws) => ({ ...ws, aiKey: null }))}
+            onClick={() => {
+              updateWorkspace((ws) => ({ ...ws, aiKey: null }));
+              toast("AI key removed");
+            }}
           >
             Remove
           </button>
@@ -174,6 +181,9 @@ function PortalsSection() {
       next[id] = { connectedAt: new Date().toISOString() };
       return { ...ws, portals: next };
     });
+    const name = PORTALS.find((p) => p.id === id)?.name;
+    if (portals[id]) toast(`${name} disconnected`);
+    else toast.success(`${name} connected`);
   }
 
   return (

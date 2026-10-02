@@ -10,6 +10,7 @@ import {
 import { FileText, Trash2, Upload } from "lucide-react";
 import { Field, PageHeader, Section } from "../../../ui/primitives";
 import { Select } from "../../../ui/controls";
+import { toast } from "sonner";
 import {
   newId,
   updateWorkspace,
@@ -59,6 +60,9 @@ export default function ProfilePage() {
     if (Object.keys(next).length) return;
     updateWorkspace((ws) => ({ ...ws, profile: draft }));
     setSaved(true);
+    toast.success("Profile saved", {
+      description: "New searches will use these details.",
+    });
   }
 
   return (

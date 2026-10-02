@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
+import { Toaster } from "sonner";
 import { usePathname } from "next/navigation";
 import {
   Activity,
@@ -127,6 +128,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 lg:px-10 lg:py-10"
         >
           {children}
+          <Toaster
+            position="bottom-right"
+            offset={24}
+            toastOptions={{
+              style: {
+                background: "var(--surface)",
+                color: "var(--text)",
+                border: "1px solid var(--border-strong)",
+                borderRadius: "14px",
+                boxShadow: "var(--shadow-lg)",
+                fontFamily: "var(--font-sans)",
+              },
+            }}
+          />
         </main>
       </div>
     </div>

@@ -6,7 +6,7 @@ const text =
 
 export function Statement() {
   return (
-    <section className="container-page py-32 lg:py-44">
+    <section className="container-page pb-8 pt-32 lg:pb-12 lg:pt-44">
       <ScrollFillText
         text={text}
         className="max-w-[22ch] font-display text-[clamp(2rem,1rem+3.6vw,4.25rem)] font-bold leading-[1.05] tracking-[-0.035em] text-balance"
