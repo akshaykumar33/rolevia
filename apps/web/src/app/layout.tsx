@@ -1,10 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { BRAND_CONFIG } from "@rolevia/config";
 
 const sans = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-display",
+  axes: ["opsz", "wdth"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -17,8 +22,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f7f6" },
-    { media: "(prefers-color-scheme: dark)", color: "#0c100f" },
+    { media: "(prefers-color-scheme: light)", color: "#f2f3ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0b09" },
   ],
 };
 
@@ -33,13 +38,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sans.variable} ${mono.variable}`}
+      className={`${sans.variable} ${mono.variable} ${display.variable}`}
       suppressHydrationWarning
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body>{children}</body>
+      <body className="grain">{children}</body>
     </html>
   );
 }

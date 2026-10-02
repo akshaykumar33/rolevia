@@ -1,57 +1,75 @@
-import { Eye, Lock, PauseCircle, ShieldCheck, X } from "lucide-react";
-import { Reveal } from "../../ui/Reveal";
+"use client";
+
+import {
+  Eye,
+  Lock,
+  PauseCircle,
+  ShieldCheck,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import type { ReactNode } from "react";
+import { FadeIn, useSpotlight } from "../../ui/motion";
 
 export function Safety() {
+  const track = useSpotlight();
   return (
-    <section id="safety" className="scroll-mt-20">
+    <section id="safety" className="scroll-mt-24">
       <div className="container-page py-24 lg:py-32">
-        <Reveal>
-          <h2 className="max-w-[22ch] text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
-            Your name goes on every application. We treat it that way.
+        <FadeIn>
+          <h2 className="max-w-[18ch] text-[clamp(2rem,1.2rem+2.4vw,3.5rem)] font-bold leading-[1.02]">
+            Your name is on every application. We act like it.
           </h2>
-        </Reveal>
+        </FadeIn>
 
-        <div className="mt-14 grid gap-4 md:grid-cols-6">
-          <Reveal className="md:col-span-4">
-            <article className="relative h-full overflow-hidden rounded-[20px] bg-accent p-8 text-accent-fg">
+        <div className="mt-16 grid gap-4 md:grid-cols-6">
+          <FadeIn className="md:col-span-4">
+            <article className="relative h-full overflow-hidden rounded-[28px] bg-accent p-8 text-accent-fg sm:p-10">
               <div
                 aria-hidden
-                className="absolute -right-24 -top-24 size-72 rounded-full border-[40px] border-accent-fg/10"
+                className="absolute -right-20 -top-20 size-80 rounded-full border-[48px] border-accent-fg/10"
               />
-              <ShieldCheck size={28} aria-hidden />
-              <h3 className="mt-10 text-xl font-semibold">Nothing made up</h3>
-              <p className="mt-2 max-w-[48ch] opacity-90">
-                Tailored resumes are checked against your originals before
-                anything is sent. A new skill, title or date blocks the
-                application and tells you why.
+              <div
+                aria-hidden
+                className="absolute -bottom-24 right-24 size-56 rounded-full border-[32px] border-accent-fg/[0.06]"
+              />
+              <ShieldCheck size={30} aria-hidden />
+              <h3 className="mt-14 text-3xl font-bold">
+                Nothing made up. Ever.
+              </h3>
+              <p className="mt-3 max-w-[46ch] text-lg opacity-85">
+                Every tailored resume is checked against your originals. A new
+                skill, title or date blocks the application and tells you why.
               </p>
-              <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent-fg/10 px-3 py-1.5 text-sm">
+              <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent-fg/10 px-4 py-2 text-sm font-medium">
                 <X size={14} aria-hidden />
                 Blocked: &ldquo;Kubernetes&rdquo; is not in your resume
               </div>
             </article>
-          </Reveal>
+          </FadeIn>
 
-          <Reveal className="md:col-span-2" delay={80}>
-            <Card icon={Eye} title="You approve first">
-              Review mode is on by default. Switch to full autopilot when you
-              trust the results.
+          <FadeIn className="md:col-span-2" delay={0.08}>
+            <Card icon={Eye} title="You approve first" onMove={track}>
+              Review mode is on by default. Flip to autopilot when you trust the
+              results.
             </Card>
-          </Reveal>
-
-          <Reveal className="md:col-span-3" delay={120}>
-            <Card icon={Lock} title="Keys and sessions stay private">
+          </FadeIn>
+          <FadeIn className="md:col-span-3" delay={0.12}>
+            <Card
+              icon={Lock}
+              title="Keys and sessions stay private"
+              onMove={track}
+            >
               Your AI key and portal sessions are encrypted per account and
               never shown again after you save them.
             </Card>
-          </Reveal>
-
-          <Reveal className="md:col-span-3" delay={160}>
-            <Card icon={PauseCircle} title="Gentle on job sites">
-              Daily caps per portal and human-paced activity. One switch pauses
-              everything.
+          </FadeIn>
+          <FadeIn className="md:col-span-3" delay={0.16}>
+            <Card icon={PauseCircle} title="Gentle on job sites" onMove={track}>
+              Daily caps per portal, human-paced activity, and one switch that
+              pauses everything.
             </Card>
-          </Reveal>
+          </FadeIn>
         </div>
       </div>
     </section>
@@ -62,18 +80,23 @@ function Card({
   icon: Icon,
   title,
   children,
+  onMove,
 }: {
-  icon: typeof Eye;
+  icon: LucideIcon;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
+  onMove: ReturnType<typeof useSpotlight>;
 }) {
   return (
-    <article className="group h-full rounded-[20px] border border-line bg-surface p-8 transition-[border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-line-strong">
-      <span className="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent">
-        <Icon size={20} aria-hidden />
+    <article
+      onPointerMove={onMove}
+      className="spotlight h-full rounded-[28px] border border-line bg-surface p-8 transition-transform duration-300 ease-out hover:-translate-y-1"
+    >
+      <span className="grid size-12 place-items-center rounded-2xl bg-accent-soft text-accent">
+        <Icon size={22} aria-hidden />
       </span>
-      <h3 className="mt-8 text-base font-semibold">{title}</h3>
-      <p className="mt-1.5 max-w-[46ch] text-fg-2">{children}</p>
+      <h3 className="mt-10 text-xl font-bold">{title}</h3>
+      <p className="mt-2 max-w-[46ch] text-fg-2">{children}</p>
     </article>
   );
 }

@@ -46,7 +46,7 @@ export function Tailoring() {
     <section className="border-y border-line bg-surface">
       <div className="container-page grid gap-14 py-24 lg:grid-cols-[1fr_1.15fr] lg:items-center lg:py-32">
         <Reveal>
-          <h2 className="max-w-[18ch] text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">
+          <h2 className="max-w-[18ch] text-[clamp(2rem,1.2rem+2.4vw,3.5rem)] font-bold leading-[1.02]">
             Same experience. Told the way each job needs to hear it.
           </h2>
           <p className="mt-5 max-w-[50ch] text-fg-2">

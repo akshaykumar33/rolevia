@@ -27,7 +27,9 @@ export function Faq() {
   return (
     <section id="faq" className="container-page scroll-mt-20 py-20 lg:py-24">
       <div className="mx-auto max-w-3xl">
-        <h2 className="text-2xl font-semibold sm:text-3xl">Questions</h2>
+        <h2 className="text-[clamp(2rem,1.2rem+2.4vw,3.5rem)] font-bold">
+          Questions
+        </h2>
         <div className="mt-8 divide-y divide-line border-y border-line">
           {faqs.map((f) => (
             <details key={f.q} className="group py-1">

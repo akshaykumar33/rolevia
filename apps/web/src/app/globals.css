@@ -11,19 +11,19 @@
 :root {
   color-scheme: light;
 
-  --bg: #f6f7f6;
-  --surface: #fdfdfc;
-  --surface-2: #eff2f0;
-  --text: #111614;
-  --text-2: #464e4b;
-  --text-3: #66706c;
-  --border: #e0e4e2;
-  --border-strong: #c9cfcc;
+  --bg: #f2f3ee;
+  --surface: #fbfbf8;
+  --surface-2: #e9eae3;
+  --text: #0d0e0b;
+  --text-2: #44463e;
+  --text-3: #686b60;
+  --border: #dddfd6;
+  --border-strong: #c4c7bb;
 
-  --accent: #0d7a64;
-  --accent-hover: #0a6553;
-  --accent-soft: #e2f1ec;
-  --accent-fg: #f7fffc;
+  --accent: #4a7a06;
+  --accent-hover: #3d6604;
+  --accent-soft: #e6f5c4;
+  --accent-fg: #fbfff0;
 
   --success: #1d7748;
   --success-soft: #e3f3e9;
@@ -40,19 +40,19 @@
 .dark {
   color-scheme: dark;
 
-  --bg: #0c100f;
-  --surface: #131817;
-  --surface-2: #1a201f;
-  --text: #e7ecea;
-  --text-2: #a9b2ae;
-  --text-3: #8a9490;
-  --border: #242b29;
-  --border-strong: #343c3a;
+  --bg: #0a0b09;
+  --surface: #121410;
+  --surface-2: #1a1d17;
+  --text: #eef0e8;
+  --text-2: #a8ac9f;
+  --text-3: #878b7e;
+  --border: #23261f;
+  --border-strong: #353a2e;
 
-  --accent: #3cc6a2;
-  --accent-hover: #5ad3b3;
-  --accent-soft: rgb(60 198 162 / 0.12);
-  --accent-fg: #04201a;
+  --accent: #c6f43d;
+  --accent-hover: #d6fb6a;
+  --accent-soft: rgb(198 244 61 / 0.11);
+  --accent-fg: #0d0e0b;
 
   --success: #4ade80;
   --success-soft: rgb(74 222 128 / 0.12);
@@ -79,7 +79,7 @@
   h1,
   h2,
   h3 {
-    @apply text-balance tracking-tight;
+    @apply text-balance font-display tracking-[-0.025em];
   }
 
   p {
@@ -138,7 +138,7 @@
     @apply text-sm text-danger;
   }
   .input {
-    @apply h-10 w-full rounded-control border border-line-strong bg-surface px-3 text-sm text-fg shadow-sm transition-colors placeholder:text-fg-3 hover:border-fg-3 focus-visible:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30;
+    @apply h-11 w-full cursor-text rounded-[12px] border border-line-strong bg-surface-2/50 px-3.5 text-sm text-fg transition-[border-color,background-color,box-shadow] duration-150 placeholder:text-fg-3 hover:border-fg-3 hover:bg-surface-2/80 focus-visible:border-accent focus-visible:bg-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent/15 aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/15;
   }
   textarea.input {
     @apply h-auto min-h-28 py-2.5 leading-relaxed;
@@ -199,4 +199,129 @@
   from {
     transform: scaleX(0);
   }
+}
+
+/* Film grain: one fixed layer, never on scrolling containers. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Light sweep across primary buttons on hover. */
+.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.45) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 700ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+.sheen:hover::before {
+  transform: translateX(120%);
+}
+
+/* Border and glow that follow the pointer; --x/--y set from JS. */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    380px circle at var(--x, 50%) var(--y, 50%),
+    var(--accent),
+    transparent 45%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 250ms ease-out;
+}
+.spotlight:hover::before {
+  opacity: 0.9;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+@keyframes drift {
+  to {
+    transform: translate3d(80px, 60px, 0) scale(1.15);
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}
+
+/* Pointer cursor on everything clickable, not-allowed when disabled. */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  [role="switch"],
+  [role="option"],
+  summary,
+  select,
+  label[for],
+  a[href] {
+    cursor: pointer;
+  }
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+  button.input {
+    cursor: pointer;
+  }
+}
+
+/* Thin themed scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-3);
 }

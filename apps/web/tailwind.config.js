@@ -39,6 +39,7 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        display: ["var(--font-display)", "var(--font-sans)", "sans-serif"],
       },
       // Scale at ~1.25: 12 / 14 / 16 / 20 / 25 / 31 / 39 / 49
       fontSize: {
