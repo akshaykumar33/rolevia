@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Check, FileText, KeyRound } from "lucide-react";
+import { RoleviaMark } from "../../ui/Logo";
 
 function Panel({ children }: { children: ReactNode }) {
   return <div className="card p-5 shadow-lg">{children}</div>;
@@ -132,9 +133,7 @@ export function ReportPreview() {
   return (
     <Panel>
       <div className="flex items-center gap-3 border-b border-line pb-4">
-        <span className="grid size-9 place-items-center rounded-full bg-accent text-sm font-semibold text-accent-fg">
-          R
-        </span>
+        <RoleviaMark size={36} />
         <div>
           <p className="text-sm font-semibold">Your Tuesday report</p>
           <p className="text-xs text-fg-3">Sent at 9:42</p>
