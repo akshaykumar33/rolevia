@@ -83,3 +83,6 @@ test-results/
 tmp/
 temp/
 .cache/
+
+.vercel
+.env*
