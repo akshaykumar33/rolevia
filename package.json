@@ -25,7 +25,7 @@
     "@secretlint/secretlint-rule-preset-recommend": "^9.3.4",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
-    "prettier": "^3.5.3",
+    "prettier": "^3.9.9",
     "secretlint": "^9.3.4",
     "turbo": "^2.4.4",
     "typescript": "^5.8.2"
