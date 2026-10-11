@@ -24,7 +24,7 @@
     "@secretlint/secretlint-rule-pattern": "^9.3.4",
     "@secretlint/secretlint-rule-preset-recommend": "^9.3.4",
     "husky": "^9.1.7",
-    "lint-staged": "^15.4.3",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.5.3",
     "secretlint": "^9.3.4",
     "turbo": "^2.4.4",
